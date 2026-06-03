@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimalist Pro App</title>
+    <title>Tokyo Travel Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,79 +17,142 @@
     <div id="app" class="w-full max-w-md bg-white min-h-screen flex flex-col shadow-2xl relative border-x border-zinc-200">
         
         <header class="bg-white border-b border-zinc-200 px-6 py-4 sticky top-0 z-50 flex justify-between items-center">
-            <h1 class="text-xl font-black tracking-widest uppercase">{{ currentTabTitle }}</h1>
-            <span class="text-xs font-mono font-bold bg-zinc-900 text-white px-2 py-1 rounded">{{ todayDate }}</span>
+            <div>
+                <h1 class="text-xl font-black tracking-widest uppercase">{{ currentTabTitle }}</h1>
+                <p class="text-[10px] text-zinc-400 font-mono tracking-wider mt-0.5">TOKYO · 30/6 - 7/7</p>
+            </div>
+            <span class="text-xs font-mono font-bold bg-zinc-900 text-white px-2 py-1 rounded">2026</span>
         </header>
 
         <main class="flex-1 overflow-y-auto p-5 pb-24 no-scrollbar">
             
             <div v-if="activeTab === 'schedule'" class="space-y-4">
                 <div class="bg-black text-white p-4 rounded-2xl shadow-sm">
-                    <p class="text-xs uppercase tracking-wider opacity-60">Today's Progress</p>
-                    <p class="text-lg font-bold mt-1">今天尚有 {{ schedules.length }} 個行程</p>
+                    <p class="text-xs uppercase tracking-wider opacity-60">Current Status</p>
+                    <p class="text-base font-bold mt-1">目前已規劃 {{ schedules.length }} 個東京行程</p>
                 </div>
                 
                 <div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-200 space-y-2">
-                    <input v-model="newSchedule.time" type="time" class="w-full bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
-                    <input v-model="newSchedule.content" type="text" placeholder="輸入行程內容..." class="w-full bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
-                    <button @click="addSchedule" class="w-full bg-zinc-900 hover:bg-black text-white rounded-xl py-2 text-sm font-medium transition-all">新增行程</button>
+                    <div class="flex space-x-2">
+                        <select v-model="newSchedule.date" class="w-1/3 bg-white border border-zinc-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-black">
+                            <option value="30/6">30/6 (二)</option>
+                            <option value="1/7">1/7 (三)</option>
+                            <option value="2/7">2/7 (四)</option>
+                            <option value="3/7">3/7 (五)</option>
+                            <option value="4/7">4/7 (六)</option>
+                            <option value="5/7">5/7 (日)</option>
+                            <option value="6/7">6/7 (一)</option>
+                            <option value="7/7">7/7 (二)</option>
+                        </select>
+                        <input v-model="newSchedule.time" type="time" class="w-2/3 bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
+                    </div>
+                    <input v-model="newSchedule.content" type="text" placeholder="輸入行程景點 (如: 澀谷展望台)..." class="w-full bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
+                    <button @click="addSchedule" class="w-full bg-zinc-900 hover:bg-black text-white rounded-xl py-2 text-sm font-medium transition-all">隨時新增行程</button>
                 </div>
 
-                <div class="space-y-3">
+                <div class="space-y-4">
                     <div v-for="(item, index) in sortedSchedules" :key="index" class="bg-white border border-zinc-200 p-4 rounded-2xl flex justify-between items-center shadow-sm">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-xs font-mono font-bold bg-zinc-100 px-2 py-1 rounded border border-zinc-300">{{ item.time }}</span>
-                            <p class="text-sm font-medium text-zinc-800">{{ item.content }}</p>
+                        <div class="flex items-start space-x-3">
+                            <div class="flex flex-col items-center">
+                                <span class="text-[10px] font-bold bg-black text-white px-1.5 py-0.5 rounded font-mono">{{ item.date }}</span>
+                                <span class="text-xs font-mono font-bold text-zinc-400 mt-1">{{ item.time }}</span>
+                            </div>
+                            <p class="text-sm font-medium text-zinc-800 pt-1">{{ item.content }}</p>
                         </div>
-                        <button @click="deleteSchedule(index)" class="text-zinc-400 hover:text-black"><i class="fa-regular fa-trash-can"></i></button>
+                        <button @click="deleteSchedule(index)" class="text-zinc-400 hover:text-black pl-2"><i class="fa-regular fa-trash-can"></i></button>
                     </div>
-                    <p v-if="schedules.length === 0" class="text-center text-zinc-400 text-xs py-8">目前沒有安排行程</p>
+                    <p v-if="schedules.length === 0" class="text-center text-zinc-400 text-xs py-8">目前行程空空如也，快去新增吧！</p>
                 </div>
             </div>
 
             <div v-if="activeTab === 'map'" class="space-y-4">
-                <div class="bg-white border border-zinc-200 rounded-2xl p-3 shadow-sm overflow-hidden">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3615.007963297052!2d121.56228357632617!3d25.033664038301777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442abb6da9c9e17%3A0x84a268a8b6940350!2z6Ie6 thoseIDEwMQ!5e0!3m2!1szh-TW!2stw!4v1700000000000!5m2!1szh-TW!2stw" class="w-full h-64 rounded-xl border-0" allowfullscreen="" loading="lazy"></iframe>
+                <div class="bg-zinc-900 text-white p-4 rounded-2xl shadow-sm flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-mono opacity-60">TOKYO WEATHER</p>
+                        <h3 class="font-bold text-lg mt-1">東京即時天氣預報</h3>
+                    </div>
+                    <div class="text-right">
+                        <i class="fa-solid fa-cloud-sun text-2xl"></i>
+                        <p class="text-xs font-mono mt-1">24°C - 28°C</p>
+                    </div>
                 </div>
-                <div class="bg-zinc-900 text-white p-4 rounded-2xl shadow-sm">
-                    <h3 class="font-bold text-sm mb-1"><i class="fa-solid fa-location-dot mr-1"></i> 我的探索標記</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">此功能已整合地圖嵌入。你可以將常去的景點或旅遊目的地記錄在此處，方便隨時查看位置。</p>
+
+                <div class="bg-white border border-zinc-200 rounded-2xl p-3 shadow-sm overflow-hidden">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3241.747975468373!2d139.74324427635293!3d35.65858473121174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bbd9009ec09%3A0x481a93f0d2a409dd!2sTokyo%20Tower!5e0!3m2!1szh-TW!2sjp!4v1700000000000!5m2!1szh-TW!2sjp" class="w-full h-72 rounded-xl border-0" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
 
-            <div v-if="activeTab === 'accounting'" class="space-y-4">
-                <div class="bg-black text-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
-                    <div>
-                        <p class="text-xs uppercase tracking-wider opacity-60">Total Expense</p>
-                        <p class="text-3xl font-black mt-1">$ {{ totalExpense }}</p>
+            <div v-if="activeTab === 'transit'" class="space-y-4">
+                <p class="text-xs font-black uppercase tracking-widest text-zinc-400 mb-1">預約與交通狀態清單</p>
+                
+                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm flex justify-between items-start">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-zinc-100 border border-zinc-300 text-zinc-800 text-[10px] font-bold px-2 py-0.5 rounded-full">機票飛機</span>
+                            <span class="text-xs font-mono text-zinc-400">30/6 去程</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-zinc-800">香港國際機場 (HKG) ➔ 東京成田 (NRT)</h4>
+                        <p class="text-xs text-zinc-500">狀態: 已確認電子機票 (機位已預約)</p>
                     </div>
-                    <i class="fa-solid fa-wallet text-3xl opacity-20"></i>
+                    <i class="fa-solid fa-plane text-zinc-300 text-xl"></i>
                 </div>
 
-                <div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-200 space-y-2">
-                    <input v-model="newExpense.title" type="text" placeholder="品項名稱 (如：晚餐)" class="w-full bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
-                    <input v-model.number="newExpense.amount" type="number" placeholder="金額" class="w-full bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
-                    <button @click="addExpense" class="w-full bg-zinc-900 hover:bg-black text-white rounded-xl py-2 text-sm font-medium transition-all">記下一筆</button>
+                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm flex justify-between items-start">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-zinc-100 border border-zinc-300 text-zinc-800 text-[10px] font-bold px-2 py-0.5 rounded-full">酒店住宿</span>
+                            <span class="text-xs font-mono text-zinc-400">7 晚住宿</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-zinc-800">東京新宿極簡設計酒店</h4>
+                        <p class="text-xs text-zinc-500">狀態: Check-in 憑證已儲存於 Apple Wallet</p>
+                    </div>
+                    <i class="fa-solid fa-hotel text-zinc-300 text-xl"></i>
                 </div>
 
-                <div class="space-y-2">
-                    <div v-for="(item, index) in expenses" :key="index" class="bg-white border border-zinc-200 p-4 rounded-2xl flex justify-between items-center shadow-sm">
-                        <div>
-                            <p class="text-sm font-bold text-zinc-800">{{ item.title }}</p>
-                            <p class="text-xs text-zinc-400">{{ item.date }}</p>
+                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm flex justify-between items-start">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-zinc-100 border border-zinc-300 text-zinc-800 text-[10px] font-bold px-2 py-0.5 rounded-full">景點門票</span>
+                            <span class="text-xs font-mono text-zinc-400">2/7 14:00</span>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="text-sm font-mono font-black">-${{ item.amount }}</span>
-                            <button @click="deleteExpense(index)" class="text-zinc-400 hover:text-black"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
+                        <h4 class="font-bold text-sm text-zinc-800">東京 SHIBUYA SKY 展望台</h4>
+                        <p class="text-xs text-zinc-500">狀態: QR Code 門票已載入</p>
                     </div>
-                    <p v-if="expenses.length === 0" class="text-center text-zinc-400 text-xs py-8">尚無記帳紀錄</p>
+                    <i class="fa-solid fa-ticket text-zinc-300 text-xl"></i>
                 </div>
+            </div>
+
+            <div v-if="activeTab === 'currency'" class="space-y-4">
+                <div class="bg-black text-white p-4 rounded-2xl shadow-sm">
+                    <p class="text-xs uppercase tracking-wider opacity-60">Fx Converter</p>
+                    <p class="text-sm font-medium mt-1">即時同步換算（輸入日圓即可對照）</p>
+                </div>
+
+                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm space-y-3">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider">輸入 日圓 (JPY ¥)</label>
+                    <div class="flex items-center border border-zinc-300 rounded-xl px-3 py-2 bg-zinc-50">
+                        <span class="text-base font-black mr-2">¥</span>
+                        <input v-model.number="jpyInput" type="number" placeholder="請輸入日圓金額..." class="w-full bg-transparent text-lg font-mono focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-zinc-50 border border-zinc-200 p-4 rounded-2xl shadow-sm">
+                        <p class="text-xs font-bold text-zinc-400">折合 港幣 (HKD)</p>
+                        <p class="text-xl font-mono font-black mt-2 text-zinc-800">$ {{ convertedHkd }}</p>
+                    </div>
+                    <div class="bg-zinc-50 border border-zinc-200 p-4 rounded-2xl shadow-sm">
+                        <p class="text-xs font-bold text-zinc-400">折合 英鎊 (GBP)</p>
+                        <p class="text-xl font-mono font-black mt-2 text-zinc-800">£ {{ convertedGbp }}</p>
+                    </div>
+                </div>
+
+                <p class="text-[10px] text-zinc-400 text-center italic">註：匯率以 100 JPY ≈ 5.15 HKD ≈ 0.52 GBP 基準計算，僅供旅行消費購物參考。</p>
             </div>
 
             <div v-if="activeTab === 'shopping'" class="space-y-4">
                 <div class="flex space-x-2">
-                    <input v-model="newShopItem" @keyup.enter="addShopItem" type="text" placeholder="想買什麼...？" class="flex-1 bg-white border border-zinc-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-black">
+                    <input v-model="newShopItem" @keyup.enter="addShopItem" type="text" placeholder="藥妝、伴手禮、電器..." class="flex-1 bg-white border border-zinc-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-black">
                     <button @click="addShopItem" class="bg-zinc-900 hover:bg-black text-white px-4 rounded-xl text-sm font-medium transition-all"><i class="fa-solid fa-plus"></i></button>
                 </div>
 
@@ -101,49 +164,8 @@
                         </div>
                         <button @click="deleteShopItem(index)" class="text-zinc-400 hover:text-black"><i class="fa-regular fa-trash-can"></i></button>
                     </div>
-                    <p v-if="shoppingList.length === 0" class="text-center text-zinc-400 text-xs py-8">購物清單空空如也</p>
+                    <p v-if="shoppingList.length === 0" class="text-center text-zinc-400 text-xs py-8">日本藥妝清單目前是空的</p>
                 </div>
-            </div>
-
-            <div v-if="activeTab === 'diary'" class="space-y-4">
-                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm space-y-3">
-                    <p class="text-xs font-bold uppercase tracking-wider text-zinc-400">Thoughts / Notes</p>
-                    <textarea v-model="diaryText" placeholder="今天過得如何？寫下你的想法..." class="w-full h-40 bg-zinc-50 border border-zinc-200 rounded-xl p-3 text-sm focus:outline-none focus:border-black resize-none"></textarea>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-zinc-400">自動儲存於本地快取</span>
-                        <button @click="saveDiary" class="bg-zinc-900 hover:bg-black text-white px-4 py-1.5 rounded-xl text-xs font-medium transition-all">儲存日記</button>
-                    </div>
-                </div>
-                <div class="border-l-2 border-zinc-900 pl-4 space-y-2 py-2">
-                    <p class="text-xs font-bold text-zinc-400">昨日記錄</p>
-                    <p class="text-sm text-zinc-600 italic">"完成了網頁 App 的第一版部署，黑白卡片風格在手機上看真的很精緻，很有成就感。"</p>
-                </div>
-            </div>
-
-            <div v-if="activeTab === 'settings'" class="space-y-4">
-                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-white text-lg font-black">WA</div>
-                    <div>
-                        <h4 class="font-bold text-base text-zinc-800">User / Administrator</h4>
-                        <p class="text-xs text-zinc-400">Premium Account</p>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-zinc-200 rounded-2xl p-2 shadow-sm divide-y divide-zinc-100">
-                    <div class="p-3 flex justify-between items-center">
-                        <span class="text-sm font-medium text-zinc-700"><i class="fa-regular fa-bell mr-2 w-5 text-center"></i> 推播通知</span>
-                        <div class="w-10 h-6 bg-zinc-900 rounded-full p-1 cursor-pointer flex justify-end"><div class="bg-white w-4 h-4 rounded-full shadow"></div></div>
-                    </div>
-                    <div class="p-3 flex justify-between items-center">
-                        <span class="text-sm font-medium text-zinc-700"><i class="fa-solid fa-fingerprint mr-2 w-5 text-center"></i> 生物識別解鎖</span>
-                        <div class="w-10 h-6 bg-zinc-900 rounded-full p-1 cursor-pointer flex justify-end"><div class="bg-white w-4 h-4 rounded-full shadow"></div></div>
-                    </div>
-                    <div class="p-3 flex justify-between items-center">
-                        <span class="text-sm font-medium text-zinc-700"><i class="fa-solid fa-cloud-arrow-up mr-2 w-5 text-center"></i> iCloud 自動同步</span>
-                        <div class="w-10 h-6 bg-zinc-200 rounded-full p-1 cursor-pointer flex justify-start"><div class="bg-white w-4 h-4 rounded-full shadow"></div></div>
-                    </div>
-                </div>
-                <p class="text-center text-[10px] text-zinc-400 uppercase tracking-widest pt-4">Version 1.0.0 (Pro)</p>
             </div>
 
         </main>
@@ -151,32 +173,27 @@
         <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-zinc-200 h-20 flex justify-around items-center px-1 z-50">
             <button @click="activeTab = 'schedule'" :class="activeTab === 'schedule' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
                 <i class="fa-regular fa-calendar-check text-lg mb-1"></i>
-                <span class="text-[9px] tracking-tight">行程</span>
+                <span class="text-[10px] tracking-tight">行程</span>
             </button>
             
             <button @click="activeTab = 'map'" :class="activeTab === 'map' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
                 <i class="fa-regular fa-map text-lg mb-1"></i>
-                <span class="text-[9px] tracking-tight">地圖</span>
+                <span class="text-[10px] tracking-tight">地圖</span>
             </button>
             
-            <button @click="activeTab = 'accounting'" :class="activeTab === 'accounting' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-solid fa-coins text-lg mb-1"></i>
-                <span class="text-[9px] tracking-tight">記帳</span>
+            <button @click="activeTab = 'transit'" :class="activeTab === 'transit' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
+                <i class="fa-solid fa-train-subway text-lg mb-1"></i>
+                <span class="text-[10px] tracking-tight">交通預約</span>
             </button>
             
+            <button @click="activeTab = 'currency'" :class="activeTab === 'currency' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
+                <i class="fa-solid fa-calculator text-lg mb-1"></i>
+                <span class="text-[10px] tracking-tight">匯率計算</span>
+            </button>
+
             <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
                 <i class="fa-solid fa-bag-shopping text-lg mb-1"></i>
-                <span class="text-[9px] tracking-tight">購物</span>
-            </button>
-
-            <button @click="activeTab = 'diary'" :class="activeTab === 'diary' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-regular fa-pen-to-square text-lg mb-1"></i>
-                <span class="text-[9px] tracking-tight">日記</span>
-            </button>
-
-            <button @click="activeTab = 'settings'" :class="activeTab === 'settings' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-solid fa-sliders text-lg mb-1"></i>
-                <span class="text-[9px] tracking-tight">設定</span>
+                <span class="text-[10px] tracking-tight">購買清單</span>
             </button>
         </nav>
 
@@ -189,57 +206,61 @@
             setup() {
                 const activeTab = ref('schedule');
                 
-                // 1. 行程資料
+                // 1. 東京 8 天預設初始行程
                 const schedules = ref([
-                    { time: '09:00', content: '早晨咖啡與信件回覆' },
-                    { time: '14:30', content: '專案技術會議' }
+                    { date: '30/6', time: '13:00', content: '抵達東京成田機場 & 酒店 Check-in' },
+                    { date: '30/6', time: '18:30', content: '新宿附近散策、吃日式拉麵' },
+                    { date: '1/7', time: '10:00', content: '雷門淺草寺參拜 & 仲見世通吃點心' },
+                    { date: '2/7', time: '14:00', content: '預約：SHIBUYA SKY 俯瞰全東京景緻' }
                 ]);
-                const newSchedule = ref({ time: '', content: '' });
+                const newSchedule = ref({ date: '30/6', time: '', content: '' });
 
-                // 2. 記帳資料
-                const expenses = ref([
-                    { title: '美式咖啡', amount: 120, date: '今日' },
-                    { title: '日式拉麵', amount: 280, date: '今日' }
-                ]);
-                const newExpense = ref({ title: '', amount: null });
+                // 2. 匯率計算機輸入值
+                const jpyInput = ref(null);
 
-                // 3. 購物清單資料
+                // 3. 購買清單
                 const shoppingList = ref([
-                    { name: 'iPad Pro 螢幕保護貼', done: false },
-                    { name: '黑色簡約馬克杯', done: true }
+                    { name: '合利他命 EX Plus 兩罐', done: false },
+                    { name: '大正感冒藥', done: false },
+                    { name: 'Tokyo Banana 伴手禮盒', done: true }
                 ]);
                 const newShopItem = ref('');
 
-                // 4. 日記資料
-                const diaryText = ref('');
-
-                // 計算屬性
+                // 排序公式：先比日期，再比時間
                 const sortedSchedules = computed(() => {
-                    return [...schedules.value].sort((a, b) => a.time.localeCompare(b.time));
+                    const dateOrder = { '30/6': 1, '1/7': 2, '2/7': 3, '3/7': 4, '4/7': 5, '5/7': 6, '6/7': 7, '7/7': 8 };
+                    return [...schedules.value].sort((a, b) => {
+                        if (dateOrder[a.date] !== dateOrder[b.date]) {
+                            return dateOrder[a.date] - dateOrder[b.date];
+                        }
+                        return a.time.localeCompare(b.time);
+                    });
                 });
 
-                const totalExpense = computed(() => {
-                    return expenses.value.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+                // 動態匯率換算
+                const convertedHkd = computed(() => {
+                    if (!jpyInput.value) return '0.00';
+                    return (jpyInput.value * 0.0515).toFixed(2);
                 });
 
+                const convertedGbp = computed(() => {
+                    if (!jpyInput.value) return '0.00';
+                    return (jpyInput.value * 0.0052).toFixed(3);
+                });
+
+                // 頂部大標題切換
                 const currentTabTitle = computed(() => {
                     const titles = { 
-                        schedule: 'Timeline', 
-                        map: 'Explore Map', 
-                        accounting: 'Wallet', 
-                        shopping: 'Cart List',
-                        diary: 'Daily Log',
-                        settings: 'Preferences'
+                        schedule: 'Itinerary', 
+                        map: 'Tokyo Map', 
+                        transit: 'Reservations', 
+                        currency: 'Exchange Rate',
+                        shopping: 'Buying List'
                     };
                     return titles[activeTab.value];
                 });
 
-                const todayDate = computed(() => {
-                    const date = new Date();
-                    return `${date.getMonth() + 1}/${date.getDate()}`;
-                });
-
-                // 方法功能
+                // 方法實作
                 const addSchedule = () => {
                     if (newSchedule.value.time && newSchedule.value.content) {
                         schedules.value.push({ ...newSchedule.value });
@@ -249,19 +270,6 @@
                 };
                 const deleteSchedule = (index) => schedules.value.splice(index, 1);
 
-                const addExpense = () => {
-                    if (newExpense.value.title && newExpense.value.amount) {
-                        expenses.value.push({
-                            title: newExpense.value.title,
-                            amount: newExpense.value.amount,
-                            date: '今日'
-                        });
-                        newExpense.value.title = '';
-                        newExpense.value.amount = null;
-                    }
-                };
-                const deleteExpense = (index) => expenses.value.splice(index, 1);
-
                 const addShopItem = () => {
                     if (newShopItem.value.trim()) {
                         shoppingList.value.push({ name: newShopItem.value.trim(), done: false });
@@ -269,19 +277,12 @@
                     }
                 };
                 const deleteShopItem = (index) => shoppingList.value.splice(index, 1);
-                
-                const saveDiary = () => {
-                    if(diaryText.value.trim()) {
-                        alert('日記已成功模擬儲存！');
-                    }
-                };
 
                 return {
-                    activeTab, currentTabTitle, todayDate,
+                    activeTab, currentTabTitle,
                     schedules, newSchedule, sortedSchedules, addSchedule, deleteSchedule,
-                    expenses, newExpense, totalExpense, addExpense, deleteExpense,
-                    shoppingList, newShopItem, addShopItem, deleteShopItem,
-                    diaryText, saveDiary
+                    jpyInput, convertedHkd, convertedGbp,
+                    shoppingList, newShopItem, addShopItem, deleteShopItem
                 };
             }
         }).mount('#app');
