@@ -3,197 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tokyo Travel Planner</title>
+    <title>TOKYO JOURNAL 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif+TC:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        body { font-family: 'Courier Prime', 'Noto Serif TC', serif; }
+        .font-mono-tech { font-family: 'Share Tech Mono', monospace; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-zinc-100 font-sans antialiased text-zinc-900 flex justify-center min-h-screen">
+<body class="bg-[#F9F9F9] font-sans antialiased text-zinc-900 flex justify-center min-h-screen">
 
-    <div id="app" class="w-full max-w-md bg-white min-h-screen flex flex-col shadow-2xl relative border-x border-zinc-200">
+    <div id="app" class="w-full max-w-md bg-[#FAF9F6] min-h-screen flex flex-col relative border-x border-zinc-200 shadow-sm">
         
-        <header class="bg-white border-b border-zinc-200 px-6 py-4 sticky top-0 z-50 flex justify-between items-center">
+        <header class="border-b border-zinc-200 px-8 py-8 sticky top-0 bg-[#FAF9F6] z-50 flex justify-between items-end">
             <div>
-                <h1 class="text-xl font-black tracking-widest uppercase">{{ currentTabTitle }}</h1>
-                <p class="text-[10px] text-zinc-400 font-mono tracking-wider mt-0.5">TOKYO · 30/6 - 7/7</p>
+                <p class="text-[11px] uppercase tracking-[0.25em] font-bold text-zinc-400 font-mono-tech">MEMORIES & PLAN</p>
+                <h1 class="text-2xl font-normal tracking-widest mt-1 text-zinc-800">{{ currentTabTitle }}</h1>
             </div>
-            <span class="text-xs font-mono font-bold bg-zinc-900 text-white px-2 py-1 rounded">2026</span>
+            <div class="text-right">
+                <span class="text-xs tracking-widest border border-zinc-300 px-2 py-0.5 rounded font-mono-tech text-zinc-500">2026</span>
+                <p class="text-[10px] text-zinc-400 font-mono-tech tracking-wider mt-1">30/06 - 07/07</p>
+            </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-5 pb-24 no-scrollbar">
+        <main class="flex-1 overflow-y-auto p-6 pb-28 no-scrollbar">
             
-            <div v-if="activeTab === 'schedule'" class="space-y-4">
-                <div class="bg-black text-white p-4 rounded-2xl shadow-sm">
-                    <p class="text-xs uppercase tracking-wider opacity-60">Current Status</p>
-                    <p class="text-base font-bold mt-1">目前已規劃 {{ schedules.length }} 個東京行程</p>
-                </div>
+            <div v-if="activeTab === 'schedule'" class="space-y-6">
                 
-                <div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-200 space-y-2">
+                <div class="border border-zinc-200 bg-white p-4 rounded-xl space-y-3">
                     <div class="flex space-x-2">
-                        <select v-model="newSchedule.date" class="w-1/3 bg-white border border-zinc-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-black">
-                            <option value="30/6">30/6 (二)</option>
-                            <option value="1/7">1/7 (三)</option>
-                            <option value="2/7">2/7 (四)</option>
-                            <option value="3/7">3/7 (五)</option>
-                            <option value="4/7">4/7 (六)</option>
-                            <option value="5/7">5/7 (日)</option>
-                            <option value="6/7">6/7 (一)</option>
-                            <option value="7/7">7/7 (二)</option>
+                        <select v-model="newSchedule.date" class="w-1/3 bg-transparent border-b border-zinc-300 py-1 text-xs tracking-wider focus:outline-none focus:border-zinc-800 text-zinc-600">
+                            <option value="30/6">30/6 (Tue)</option>
+                            <option value="1/7">1/7 (Wed)</option>
+                            <option value="2/7">2/7 (Thu)</option>
+                            <option value="3/7">3/7 (Fri)</option>
+                            <option value="4/7">4/7 (Sat)</option>
+                            <option value="5/7">5/7 (Sun)</option>
+                            <option value="6/7">6/7 (Mon)</option>
+                            <option value="7/7">7/7 (Tue)</option>
                         </select>
-                        <input v-model="newSchedule.time" type="time" class="w-2/3 bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
+                        <input v-model="newSchedule.time" type="time" class="w-2/3 bg-transparent border-b border-zinc-300 py-1 text-xs font-mono-tech tracking-widest focus:outline-none focus:border-zinc-800">
                     </div>
-                    <input v-model="newSchedule.content" type="text" placeholder="輸入行程景點 (如: 澀谷展望台)..." class="w-full bg-white border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black">
-                    <button @click="addSchedule" class="w-full bg-zinc-900 hover:bg-black text-white rounded-xl py-2 text-sm font-medium transition-all">隨時新增行程</button>
+                    <div class="flex items-center space-x-2">
+                        <input v-model="newSchedule.content" type="text" placeholder="輸入行程目的地..." class="flex-1 bg-transparent border-b border-zinc-200 py-1 text-xs tracking-wide focus:outline-none focus:border-zinc-800">
+                        <button @click="addSchedule" class="text-xs uppercase border border-zinc-800 hover:bg-zinc-900 hover:text-white px-3 py-1 rounded transition-all font-mono-tech">ADD</button>
+                    </div>
                 </div>
 
-                <div class="space-y-4">
-                    <div v-for="(item, index) in sortedSchedules" :key="index" class="bg-white border border-zinc-200 p-4 rounded-2xl flex justify-between items-center shadow-sm">
-                        <div class="flex items-start space-x-3">
-                            <div class="flex flex-col items-center">
-                                <span class="text-[10px] font-bold bg-black text-white px-1.5 py-0.5 rounded font-mono">{{ item.date }}</span>
-                                <span class="text-xs font-mono font-bold text-zinc-400 mt-1">{{ item.time }}</span>
+                <div class="relative pl-4 border-l border-zinc-200 space-y-6 pt-2">
+                    <div v-for="(item, index) in sortedSchedules" :key="index" class="relative group">
+                        <div class="absolute -left-[21px] top-1.5 w-2 h-2 rounded-full bg-zinc-400 border border-[#FAF9F6]"></div>
+                        
+                        <div class="flex justify-between items-start">
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-[10px] font-mono-tech tracking-widest bg-zinc-100 text-zinc-500 border border-zinc-200 px-1.5 py-0.5 rounded">{{ item.date }}</span>
+                                    <span class="text-xs font-mono-tech font-bold text-zinc-400">{{ item.time }}</span>
+                                </div>
+                                <p class="text-sm font-medium tracking-wide text-zinc-800 leading-relaxed pr-4">{{ item.content }}</p>
                             </div>
-                            <p class="text-sm font-medium text-zinc-800 pt-1">{{ item.content }}</p>
+                            <button @click="deleteSchedule(index)" class="text-zinc-300 hover:text-zinc-800 transition-all pt-1"><i class="fa-regular fa-trash-can text-xs"></i></button>
                         </div>
-                        <button @click="deleteSchedule(index)" class="text-zinc-400 hover:text-black pl-2"><i class="fa-regular fa-trash-can"></i></button>
                     </div>
-                    <p v-if="schedules.length === 0" class="text-center text-zinc-400 text-xs py-8">目前行程空空如也，快去新增吧！</p>
+                    <p v-if="schedules.length === 0" class="text-center text-zinc-400 text-xs italic py-8 font-mono-tech">No schedules recorded.</p>
                 </div>
             </div>
 
-            <div v-if="activeTab === 'map'" class="space-y-4">
-                <div class="bg-zinc-900 text-white p-4 rounded-2xl shadow-sm flex justify-between items-center">
+            <div v-if="activeTab === 'map'" class="space-y-6">
+                <div class="border border-zinc-200 bg-white p-4 rounded-xl flex justify-between items-center">
                     <div>
-                        <p class="text-xs font-mono opacity-60">TOKYO WEATHER</p>
-                        <h3 class="font-bold text-lg mt-1">東京即時天氣預報</h3>
+                        <p class="text-[10px] font-mono-tech tracking-widest text-zinc-400">CURRENT WEATHER</p>
+                        <h3 class="text-sm tracking-widest font-bold text-zinc-700 mt-0.5">TOKYO / 日本東京</h3>
                     </div>
-                    <div class="text-right">
-                        <i class="fa-solid fa-cloud-sun text-2xl"></i>
-                        <p class="text-xs font-mono mt-1">24°C - 28°C</p>
+                    <div class="flex items-center space-x-3 border-l border-zinc-200 pl-4">
+                        <i class="fa-solid fa-cloud-sun text-zinc-500 text-xl"></i>
+                        <span class="text-sm font-mono-tech tracking-wider text-zinc-600">24°C - 28°C</span>
                     </div>
                 </div>
 
-                <div class="bg-white border border-zinc-200 rounded-2xl p-3 shadow-sm overflow-hidden">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3241.747975468373!2d139.74324427635293!3d35.65858473121174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bbd9009ec09%3A0x481a93f0d2a409dd!2sTokyo%20Tower!5e0!3m2!1szh-TW!2sjp!4v1700000000000!5m2!1szh-TW!2sjp" class="w-full h-72 rounded-xl border-0" allowfullscreen="" loading="lazy"></iframe>
+                <div class="border border-zinc-200 bg-white p-2 rounded-xl shadow-sm overflow-hidden">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3241.747975468373!2d139.74324427635293!3d35.65858473121174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bbd9009ec09%3A0x481a93f0d2a409dd!2sTokyo%20Tower!5e0!3m2!1szh-TW!2sjp!4v1700000000000!5m2!1szh-TW!2sjp" class="w-full h-80 rounded-lg filter grayscale opacity-90 border-0" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
 
             <div v-if="activeTab === 'transit'" class="space-y-4">
-                <p class="text-xs font-black uppercase tracking-widest text-zinc-400 mb-1">預約與交通狀態清單</p>
+                <p class="text-[11px] font-mono-tech tracking-[0.2em] text-zinc-400 uppercase mb-3">RESERVATIONS & TICKETS</p>
                 
-                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm flex justify-between items-start">
-                    <div class="space-y-1">
+                <div class="border border-zinc-200 bg-white p-5 rounded-xl flex justify-between items-start transition-all hover:border-zinc-400">
+                    <div class="space-y-2">
                         <div class="flex items-center space-x-2">
-                            <span class="bg-zinc-100 border border-zinc-300 text-zinc-800 text-[10px] font-bold px-2 py-0.5 rounded-full">機票飛機</span>
-                            <span class="text-xs font-mono text-zinc-400">30/6 去程</span>
+                            <span class="text-[9px] uppercase tracking-widest border border-zinc-400 text-zinc-500 px-2 py-0.5 rounded font-mono-tech">FLIGHT</span>
+                            <span class="text-xs font-mono-tech text-zinc-400">30/06 DEP</span>
                         </div>
-                        <h4 class="font-bold text-sm text-zinc-800">香港國際機場 (HKG) ➔ 東京成田 (NRT)</h4>
-                        <p class="text-xs text-zinc-500">狀態: 已確認電子機票 (機位已預約)</p>
+                        <h4 class="font-normal text-sm tracking-wide text-zinc-800">香港 (HKG) ➔ 東京成田 (NRT)</h4>
+                        <p class="text-[11px] text-zinc-400 font-mono-tech">Status: Confirmed / Seat Allocated</p>
                     </div>
-                    <i class="fa-solid fa-plane text-zinc-300 text-xl"></i>
+                    <i class="fa-solid fa-plane text-zinc-300 text-xs mt-1"></i>
                 </div>
 
-                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm flex justify-between items-start">
-                    <div class="space-y-1">
+                <div class="border border-zinc-200 bg-white p-5 rounded-xl flex justify-between items-start transition-all hover:border-zinc-400">
+                    <div class="space-y-2">
                         <div class="flex items-center space-x-2">
-                            <span class="bg-zinc-100 border border-zinc-300 text-zinc-800 text-[10px] font-bold px-2 py-0.5 rounded-full">酒店住宿</span>
-                            <span class="text-xs font-mono text-zinc-400">7 晚住宿</span>
+                            <span class="text-[9px] uppercase tracking-widest border border-zinc-400 text-zinc-500 px-2 py-0.5 rounded font-mono-tech">HOTEL</span>
+                            <span class="text-xs font-mono-tech text-zinc-400">7 NIGHTS</span>
                         </div>
-                        <h4 class="font-bold text-sm text-zinc-800">東京新宿極簡設計酒店</h4>
-                        <p class="text-xs text-zinc-500">狀態: Check-in 憑證已儲存於 Apple Wallet</p>
+                        <h4 class="font-normal text-sm tracking-wide text-zinc-800">東京新宿極簡旅宿 (Shinjuku Stay)</h4>
+                        <p class="text-[11px] text-zinc-400 font-mono-tech">Status: Apple Wallet Pass Saved</p>
                     </div>
-                    <i class="fa-solid fa-hotel text-zinc-300 text-xl"></i>
+                    <i class="fa-solid fa-hotel text-zinc-300 text-xs mt-1"></i>
                 </div>
 
-                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm flex justify-between items-start">
-                    <div class="space-y-1">
+                <div class="border border-zinc-200 bg-white p-5 rounded-xl flex justify-between items-start transition-all hover:border-zinc-400">
+                    <div class="space-y-2">
                         <div class="flex items-center space-x-2">
-                            <span class="bg-zinc-100 border border-zinc-300 text-zinc-800 text-[10px] font-bold px-2 py-0.5 rounded-full">景點門票</span>
-                            <span class="text-xs font-mono text-zinc-400">2/7 14:00</span>
+                            <span class="text-[9px] uppercase tracking-widest border border-zinc-400 text-zinc-500 px-2 py-0.5 rounded font-mono-tech">BOOKING</span>
+                            <span class="text-xs font-mono-tech text-zinc-400">02/07 14:00</span>
                         </div>
-                        <h4 class="font-bold text-sm text-zinc-800">東京 SHIBUYA SKY 展望台</h4>
-                        <p class="text-xs text-zinc-500">狀態: QR Code 門票已載入</p>
+                        <h4 class="font-normal text-sm tracking-wide text-zinc-800">SHIBUYA SKY 展望台門票</h4>
+                        <p class="text-[11px] text-zinc-400 font-mono-tech">Status: QR Code Ready</p>
                     </div>
-                    <i class="fa-solid fa-ticket text-zinc-300 text-xl"></i>
+                    <i class="fa-solid fa-ticket text-zinc-300 text-xs mt-1"></i>
                 </div>
             </div>
 
-            <div v-if="activeTab === 'currency'" class="space-y-4">
-                <div class="bg-black text-white p-4 rounded-2xl shadow-sm">
-                    <p class="text-xs uppercase tracking-wider opacity-60">Fx Converter</p>
-                    <p class="text-sm font-medium mt-1">即時同步換算（輸入日圓即可對照）</p>
-                </div>
-
-                <div class="bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm space-y-3">
-                    <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider">輸入 日圓 (JPY ¥)</label>
-                    <div class="flex items-center border border-zinc-300 rounded-xl px-3 py-2 bg-zinc-50">
-                        <span class="text-base font-black mr-2">¥</span>
-                        <input v-model.number="jpyInput" type="number" placeholder="請輸入日圓金額..." class="w-full bg-transparent text-lg font-mono focus:outline-none">
+            <div v-if="activeTab === 'currency'" class="space-y-5">
+                <div class="border border-zinc-200 bg-white p-5 rounded-xl space-y-2">
+                    <label class="block text-[10px] font-mono-tech tracking-[0.2em] text-zinc-400 uppercase">INPUT AMOUNT (JPY ¥)</label>
+                    <div class="flex items-baseline border-b border-zinc-300 py-1">
+                        <span class="text-xl font-mono-tech text-zinc-400 mr-2">¥</span>
+                        <input v-model.number="jpyInput" type="number" placeholder="0.00" class="w-full bg-transparent text-2xl font-mono-tech focus:outline-none text-zinc-800">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-zinc-50 border border-zinc-200 p-4 rounded-2xl shadow-sm">
-                        <p class="text-xs font-bold text-zinc-400">折合 港幣 (HKD)</p>
-                        <p class="text-xl font-mono font-black mt-2 text-zinc-800">$ {{ convertedHkd }}</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="border border-zinc-200 bg-white p-4 rounded-xl">
+                        <p class="text-[10px] font-mono-tech tracking-widest text-zinc-400">HONG KONG (HKD)</p>
+                        <p class="text-xl font-mono-tech font-bold mt-2 text-zinc-800">$ {{ convertedHkd }}</p>
                     </div>
-                    <div class="bg-zinc-50 border border-zinc-200 p-4 rounded-2xl shadow-sm">
-                        <p class="text-xs font-bold text-zinc-400">折合 英鎊 (GBP)</p>
-                        <p class="text-xl font-mono font-black mt-2 text-zinc-800">£ {{ convertedGbp }}</p>
+                    <div class="border border-zinc-200 bg-white p-4 rounded-xl">
+                        <p class="text-[10px] font-mono-tech tracking-widest text-zinc-400">BRITISH POUND (GBP)</p>
+                        <p class="text-xl font-mono-tech font-bold mt-2 text-zinc-800">£ {{ convertedGbp }}</p>
                     </div>
                 </div>
 
-                <p class="text-[10px] text-zinc-400 text-center italic">註：匯率以 100 JPY ≈ 5.15 HKD ≈ 0.52 GBP 基準計算，僅供旅行消費購物參考。</p>
+                <p class="text-[9px] text-zinc-400 text-center italic font-mono-tech tracking-wide pt-2">Rate standard: 100 JPY ≈ 5.15 HKD ≈ 0.52 GBP</p>
             </div>
 
-            <div v-if="activeTab === 'shopping'" class="space-y-4">
-                <div class="flex space-x-2">
-                    <input v-model="newShopItem" @keyup.enter="addShopItem" type="text" placeholder="藥妝、伴手禮、電器..." class="flex-1 bg-white border border-zinc-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-black">
-                    <button @click="addShopItem" class="bg-zinc-900 hover:bg-black text-white px-4 rounded-xl text-sm font-medium transition-all"><i class="fa-solid fa-plus"></i></button>
+            <div v-if="activeTab === 'shopping'" class="space-y-5">
+                <div class="flex space-x-2 border-b border-zinc-300 pb-1">
+                    <input v-model="newShopItem" @keyup.enter="addShopItem" type="text" placeholder="Add to checklist..." class="flex-1 bg-transparent px-2 py-1 text-xs tracking-wide focus:outline-none">
+                    <button @click="addShopItem" class="text-xs font-mono-tech uppercase tracking-widest border border-zinc-800 px-3 py-1 rounded hover:bg-zinc-900 hover:text-white transition-all">ADD</button>
                 </div>
 
-                <div class="bg-white border border-zinc-200 rounded-2xl divide-y divide-zinc-100 overflow-hidden shadow-sm">
-                    <div v-for="(item, index) in shoppingList" :key="index" class="p-4 flex justify-between items-center transition-all" :class="{'bg-zinc-50 opacity-60': item.done}">
-                        <div class="flex items-center space-x-3 cursor-pointer" @click="item.done = !item.done">
-                            <i class="fa-regular text-lg" :class="item.done ? 'fa-square-check text-black' : 'fa-square text-zinc-300'"></i>
-                            <span class="text-sm font-medium" :class="{'line-through text-zinc-400': item.done}">{{ item.name }}</span>
+                <div class="border border-zinc-200 bg-white rounded-xl overflow-hidden divide-y divide-zinc-100">
+                    <div v-for="(item, index) in shoppingList" :key="index" class="p-4 flex justify-between items-center transition-all" :class="{'bg-zinc-50 opacity-40': item.done}">
+                        <div class="flex items-center space-x-3 cursor-pointer flex-1" @click="item.done = !item.done">
+                            <div class="w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-all" :class="item.done ? 'border-zinc-800 bg-zinc-800' : 'border-zinc-300'">
+                                <i v-if="item.done" class="fa-solid fa-check text-[8px] text-white"></i>
+                            </div>
+                            <span class="text-xs tracking-wide text-zinc-700" :class="{'line-through text-zinc-400 italic': item.done}">{{ item.name }}</span>
                         </div>
-                        <button @click="deleteShopItem(index)" class="text-zinc-400 hover:text-black"><i class="fa-regular fa-trash-can"></i></button>
+                        <button @click="deleteShopItem(index)" class="text-zinc-300 hover:text-zinc-800 transition-all pl-2"><i class="fa-regular fa-trash-can text-xs"></i></button>
                     </div>
-                    <p v-if="shoppingList.length === 0" class="text-center text-zinc-400 text-xs py-8">日本藥妝清單目前是空的</p>
+                    <p v-if="shoppingList.length === 0" class="text-center text-zinc-400 text-xs italic py-8 font-mono-tech">Checklist is empty.</p>
                 </div>
             </div>
 
         </main>
 
-        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-zinc-200 h-20 flex justify-around items-center px-1 z-50">
-            <button @click="activeTab = 'schedule'" :class="activeTab === 'schedule' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-regular fa-calendar-check text-lg mb-1"></i>
-                <span class="text-[10px] tracking-tight">行程</span>
+        <nav class="absolute bottom-0 left-0 right-0 bg-[#FAF9F6] border-t border-zinc-200 h-24 flex justify-around items-center px-2 z-50">
+            <button @click="activeTab = 'schedule'" :class="activeTab === 'schedule' ? 'text-zinc-900 font-bold border-b border-zinc-900' : 'text-zinc-400'" class="flex flex-col items-center justify-center py-2 px-1 transition-all">
+                <span class="text-[10px] font-mono-tech tracking-[0.15em] uppercase">Plan</span>
             </button>
             
-            <button @click="activeTab = 'map'" :class="activeTab === 'map' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-regular fa-map text-lg mb-1"></i>
-                <span class="text-[10px] tracking-tight">地圖</span>
+            <button @click="activeTab = 'map'" :class="activeTab === 'map' ? 'text-zinc-900 font-bold border-b border-zinc-900' : 'text-zinc-400'" class="flex flex-col items-center justify-center py-2 px-1 transition-all">
+                <span class="text-[10px] font-mono-tech tracking-[0.15em] uppercase">Map</span>
             </button>
             
-            <button @click="activeTab = 'transit'" :class="activeTab === 'transit' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-solid fa-train-subway text-lg mb-1"></i>
-                <span class="text-[10px] tracking-tight">交通預約</span>
+            <button @click="activeTab = 'transit'" :class="activeTab === 'transit' ? 'text-zinc-900 font-bold border-b border-zinc-900' : 'text-zinc-400'" class="flex flex-col items-center justify-center py-2 px-1 transition-all">
+                <span class="text-[10px] font-mono-tech tracking-[0.15em] uppercase">Book</span>
             </button>
             
-            <button @click="activeTab = 'currency'" :class="activeTab === 'currency' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-solid fa-calculator text-lg mb-1"></i>
-                <span class="text-[10px] tracking-tight">匯率計算</span>
+            <button @click="activeTab = 'currency'" :class="activeTab === 'currency' ? 'text-zinc-900 font-bold border-b border-zinc-900' : 'text-zinc-400'" class="flex flex-col items-center justify-center py-2 px-1 transition-all">
+                <span class="text-[10px] font-mono-tech tracking-[0.15em] uppercase">FX</span>
             </button>
 
-            <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'text-black font-black scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                <i class="fa-solid fa-bag-shopping text-lg mb-1"></i>
-                <span class="text-[10px] tracking-tight">購買清單</span>
+            <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'text-zinc-900 font-bold border-b border-zinc-900' : 'text-zinc-400'" class="flex flex-col items-center justify-center py-2 px-1 transition-all">
+                <span class="text-[10px] font-mono-tech tracking-[0.15em] uppercase">Cart</span>
             </button>
         </nav>
 
@@ -206,27 +209,27 @@
             setup() {
                 const activeTab = ref('schedule');
                 
-                // 1. 東京 8 天預設初始行程
+                // 行程初始資料
                 const schedules = ref([
-                    { date: '30/6', time: '13:00', content: '抵達東京成田機場 & 酒店 Check-in' },
-                    { date: '30/6', time: '18:30', content: '新宿附近散策、吃日式拉麵' },
-                    { date: '1/7', time: '10:00', content: '雷門淺草寺參拜 & 仲見世通吃點心' },
-                    { date: '2/7', time: '14:00', content: '預約：SHIBUYA SKY 俯瞰全東京景緻' }
+                    { date: '30/6', time: '13:00', content: 'Arrival at Narita Airport (NRT) & Hotel Check-in' },
+                    { date: '30/6', time: '18:30', content: 'Shinjuku evening walk & Dinner (Ramen)' },
+                    { date: '1/7', time: '10:00', content: 'Asakusa Senso-ji Temple & Nakamise Shopping' },
+                    { date: '2/7', time: '14:00', content: 'Booking: SHIBUYA SKY Observatory Deck' }
                 ]);
                 const newSchedule = ref({ date: '30/6', time: '', content: '' });
 
-                // 2. 匯率計算機輸入值
+                // 匯率計算
                 const jpyInput = ref(null);
 
-                // 3. 購買清單
+                // 購買清單
                 const shoppingList = ref([
-                    { name: '合利他命 EX Plus 兩罐', done: false },
-                    { name: '大正感冒藥', done: false },
-                    { name: 'Tokyo Banana 伴手禮盒', done: true }
+                    { name: 'Alinamin EX Plus (x2)', done: false },
+                    { name: 'Pabron Gold A Cold Medicine', done: false },
+                    { name: 'Tokyo Banana Gift Box', done: true }
                 ]);
                 const newShopItem = ref('');
 
-                // 排序公式：先比日期，再比時間
+                // 行程排序邏輯
                 const sortedSchedules = computed(() => {
                     const dateOrder = { '30/6': 1, '1/7': 2, '2/7': 3, '3/7': 4, '4/7': 5, '5/7': 6, '6/7': 7, '7/7': 8 };
                     return [...schedules.value].sort((a, b) => {
@@ -237,7 +240,7 @@
                     });
                 });
 
-                // 動態匯率換算
+                // 匯率動態對照
                 const convertedHkd = computed(() => {
                     if (!jpyInput.value) return '0.00';
                     return (jpyInput.value * 0.0515).toFixed(2);
@@ -248,19 +251,19 @@
                     return (jpyInput.value * 0.0052).toFixed(3);
                 });
 
-                // 頂部大標題切換
+                // 手帳標題對照
                 const currentTabTitle = computed(() => {
                     const titles = { 
-                        schedule: 'Itinerary', 
-                        map: 'Tokyo Map', 
-                        transit: 'Reservations', 
-                        currency: 'Exchange Rate',
-                        shopping: 'Buying List'
+                        schedule: 'TOKYO JOURNAL', 
+                        map: 'EXPLORE MAP', 
+                        transit: 'TRANSIT & BOOK', 
+                        currency: 'FX CONVERTER',
+                        shopping: 'CHECKLIST'
                     };
                     return titles[activeTab.value];
                 });
 
-                // 方法實作
+                // 新增/刪除方法
                 const addSchedule = () => {
                     if (newSchedule.value.time && newSchedule.value.content) {
                         schedules.value.push({ ...newSchedule.value });
