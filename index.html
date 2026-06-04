@@ -3,289 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>東京旅遊手帳</title>
+    <title>Tokyo Travel Journal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; }
+        .font-title { font-family: 'Outfit', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         /* 磨砂玻璃效果 */
         .glass-nav {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
     </style>
 </head>
-<body class="bg-gradient-to-b from-[#A5CAD2] via-[#C8E3E9] to-[#EBF5F7] font-sans antialiased text-zinc-800 flex justify-center min-h-screen">
+<body class="bg-gradient-to-b from-[#F2F2F2] via-[#F8F7FF] to-[#FFFFFF] font-sans antialiased text-zinc-900 flex justify-center min-h-screen">
 
     <div id="app" class="w-full max-w-md min-h-screen flex flex-col relative pb-32 overflow-hidden">
         
-        <header class="px-5 pt-6 pb-2 flex justify-between items-end">
-            <div>
-                <h1 class="text-2xl font-bold tracking-wide text-zinc-900 flex items-center gap-1">
-                    東京之旅 <span class="text-sm text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-normal">2026</span>
-                </h1>
-            </div>
-            <div class="text-right text-[11px] text-zinc-600 bg-white/60 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-white/40 shadow-sm">
-                <span class="font-medium block">目前匯率基準</span>
-                <span class="font-semibold text-zinc-800">100 JPY ≈ 5.15 HKD</span>
+        <header class="px-6 pt-8 pb-3 flex justify-between items-center">
+            <h1 class="text-4xl font-extrabold tracking-tight text-zinc-900 font-title uppercase">
+                Tokyo
+            </h1>
+            <div class="text-right text-[10px] text-zinc-500 bg-white/70 border border-zinc-200 px-2.5 py-1.5 rounded-xl shadow-sm">
+                <span class="block opacity-60">匯率基準</span>
+                <span class="font-bold text-zinc-800">100 JPY ≈ 5.15 HKD</span>
             </div>
         </header>
 
         <main class="flex-1 overflow-y-auto px-4 no-scrollbar">
             
-            <div v-if="activeTab === 'schedule'" class="space-y-4">
+            <div v-if="activeTab === 'schedule'" class="space-y-5">
                 
-                <div class="flex space-x-2.5 overflow-x-auto py-2 no-scrollbar">
+                <div class="flex space-x-3 overflow-x-auto py-2 no-scrollbar">
                     <button 
                         v-for="day in dateTabs" 
                         :key="day.value"
                         @click="selectedDate = day.value"
-                        :class="selectedDate === day.value ? 'bg-[#4A72B2] text-white shadow-md shadow-blue-900/10' : 'bg-white/80 text-zinc-600 border-white/50'"
-                        class="px-3.5 py-2.5 rounded-2xl border flex flex-col items-center min-w-[65px] transition-all">
-                        <span class="text-[10px] opacity-70 mb-0.5">{{ day.label }}</span>
-                        <span class="text-base font-bold tracking-tight">{{ day.dayNum }}</span>
+                        :class="selectedDate === day.value ? 'bg-zinc-900 text-white shadow-lg' : 'bg-white text-zinc-400 border-zinc-100'"
+                        class="px-4 py-3 rounded-2xl border flex flex-col items-center min-w-[70px] transition-all">
+                        <span class="text-[9px] uppercase font-title tracking-widest opacity-60 mb-0.5">{{ day.label }}</span>
+                        <span class="text-lg font-bold tracking-tight font-title">{{ day.dayNum }}</span>
                     </button>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl flex justify-between items-center border border-white/60 shadow-sm">
+                <div class="bg-white/80 border border-zinc-100 p-4 rounded-3xl flex justify-between items-center shadow-sm">
                     <div class="flex items-center space-x-3">
-                        <i :class="getWeatherInfo(selectedDate).icon" class="text-blue-500 text-3xl"></i>
+                        <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center">
+                            <i :class="getWeatherInfo(selectedDate).icon" class="text-purple-600 text-2xl"></i>
+                        </div>
                         <div>
-                            <h3 class="text-sm font-bold text-zinc-800">東京當天天氣預測</h3>
-                            <p class="text-xs text-zinc-500 mt-0.5">{{ getWeatherInfo(selectedDate).desc }}</p>
+                            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-widest">Weather</h3>
+                            <p class="text-sm font-bold text-zinc-800">{{ getWeatherInfo(selectedDate).desc }}</p>
                         </div>
                     </div>
-                    <span class="text-base font-bold text-zinc-700 bg-white/80 px-3 py-1 rounded-xl shadow-inner">{{ getWeatherInfo(selectedDate).temp }}</span>
+                    <span class="text-xl font-black text-zinc-800 font-title">{{ getWeatherInfo(selectedDate).temp }}</span>
                 </div>
 
                 <div class="flex justify-between items-center pt-2 px-1">
-                    <h2 class="text-lg font-bold text-zinc-900 tracking-wide">行程安排</h2>
-                    <button @click="showAddScheduleModal = true" class="bg-[#4A72B2] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm hover:bg-blue-700 transition-all flex items-center gap-1">
-                        <i class="fa-solid fa-plus text-[10px]"></i> 新增
+                    <h2 class="text-xl font-black text-zinc-900 tracking-tight">今日行程</h2>
+                    <button @click="showAddScheduleModal = true" class="bg-purple-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md hover:bg-purple-700 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> 新增
                     </button>
                 </div>
 
                 <div class="space-y-3">
-                    <div v-for="(item, index) in filteredSchedules" :key="index" class="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 flex justify-between items-start">
-                        <div class="space-y-2 flex-1 pr-2">
-                            <div class="flex items-center space-x-2.5">
-                                <span class="text-xs font-bold bg-blue-50 text-[#4A72B2] px-2 py-0.5 rounded-md">{{ item.time }}</span>
-                                <h4 class="text-base font-bold text-zinc-800 tracking-wide">{{ item.content }}</h4>
+                    <div v-for="(item, index) in filteredSchedules" :key="index" class="bg-white rounded-[2rem] p-5 shadow-sm border border-zinc-50 flex justify-between items-start">
+                        <div class="space-y-3 flex-1 pr-2">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-[11px] font-bold bg-purple-50 text-purple-600 px-2 py-1 rounded-lg font-title">{{ item.time }}</span>
+                                <h4 class="text-base font-bold text-zinc-800">{{ item.content }}</h4>
                             </div>
                             
-                            <p v-if="item.note" class="text-xs text-zinc-500 bg-zinc-50 p-2 rounded-xl border border-zinc-100">
-                                <i class="fa-regular fa-comment-dots text-blue-400 mr-1"></i>{{ item.note }}
+                            <p v-if="item.note" class="text-xs text-zinc-500 bg-zinc-50 p-3 rounded-2xl">
+                                <i class="fa-regular fa-lightbulb text-purple-400 mr-2"></i>{{ item.note }}
                             </p>
                             
-                            <div v-if="item.mapUrl" class="pt-0.5">
-                                <a :href="formatMapUrl(item.mapUrl)" target="_blank" class="inline-flex items-center text-xs text-[#4A72B2] font-medium bg-blue-50/70 px-2.5 py-1 rounded-full hover:underline">
-                                    <i class="fa-solid fa-location-arrow text-[10px] mr-1"></i> 導航：{{ item.mapUrl }}
+                            <div v-if="item.mapUrl" class="pt-1">
+                                <a :href="formatMapUrl(item.mapUrl)" target="_blank" class="inline-flex items-center text-[11px] font-bold text-purple-600 bg-purple-50/50 px-3 py-1.5 rounded-full">
+                                    <i class="fa-solid fa-location-dot mr-1.5"></i> 導航：{{ item.mapUrl }}
                                 </a>
                             </div>
                         </div>
                         
                         <div class="flex items-center space-x-1">
-                            <button @click="openEditSchedule(item)" class="p-1.5 text-zinc-400 hover:text-blue-500 transition-all"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button @click="deleteSchedule(item.originalIndex)" class="p-1.5 text-zinc-300 hover:text-red-500 transition-all"><i class="fa-regular fa-trash-can text-xs"></i></button>
+                            <button @click="openEditSchedule(item)" class="p-2 text-zinc-300 hover:text-purple-600 transition-all"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
+                            <button @click="deleteSchedule(item.originalIndex)" class="p-2 text-zinc-200 hover:text-red-500 transition-all"><i class="fa-regular fa-trash-can text-sm"></i></button>
                         </div>
                     </div>
                     
-                    <p v-if="filteredSchedules.length === 0" class="text-center text-zinc-500 text-sm py-12 bg-white/40 rounded-2xl border border-dashed border-zinc-300">這天目前沒有安排行程。</p>
+                    <p v-if="filteredSchedules.length === 0" class="text-center text-zinc-400 text-sm py-16 font-medium italic">目前沒有任何行程</p>
                 </div>
             </div>
 
             <div v-if="activeTab === 'transit'" class="space-y-4">
                 <div class="flex justify-between items-center px-1">
-                    <h2 class="text-lg font-bold text-zinc-900">憑證與預約</h2>
-                    <button @click="showAddTransitModal = true" class="bg-[#4A72B2] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1">
-                        <i class="fa-solid fa-plus text-[10px]"></i> 新增
+                    <h2 class="text-xl font-black text-zinc-900 tracking-tight">預約憑證</h2>
+                    <button @click="showAddTransitModal = true" class="bg-purple-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> 新增
                     </button>
                 </div>
 
                 <div class="space-y-3">
-                    <div v-for="(item, index) in transitList" :key="index" class="bg-white p-4 rounded-2xl shadow-sm border border-zinc-100 flex justify-between items-start">
-                        <div class="space-y-1">
+                    <div v-for="(item, index) in transitList" :key="index" class="bg-white p-5 rounded-[2rem] shadow-sm border border-zinc-50 flex justify-between items-start">
+                        <div class="space-y-2">
                             <div class="flex items-center space-x-2">
-                                <span class="text-[10px] font-bold bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded-md">{{ item.type }}</span>
+                                <span class="text-[10px] font-bold bg-zinc-900 text-white px-2 py-0.5 rounded">{{ item.type }}</span>
                                 <h4 class="font-bold text-base text-zinc-800">{{ item.title }}</h4>
                             </div>
-                            <p class="text-xs text-zinc-500">{{ item.note }}</p>
+                            <p class="text-xs text-zinc-500 leading-relaxed">{{ item.note }}</p>
                         </div>
                         <div class="flex items-center space-x-1">
-                            <button @click="openEditTransit(item, index)" class="p-1.5 text-zinc-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button @click="deleteTransit(index)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
+                            <button @click="openEditTransit(item, index)" class="p-2 text-zinc-300 hover:text-purple-600"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
+                            <button @click="deleteTransit(index)" class="p-2 text-zinc-200 hover:text-red-500"><i class="fa-regular fa-trash-can text-sm"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div v-if="activeTab === 'currency'" class="space-y-4">
-                <div class="bg-white p-5 rounded-2xl space-y-3 shadow-sm border border-zinc-100">
-                    <h3 class="text-sm font-bold text-zinc-700">快捷匯率換算</h3>
-                    <div class="flex items-center border-b border-zinc-200 py-2">
-                        <span class="text-xl font-bold text-zinc-400 mr-2">¥</span>
-                        <input v-model.number="jpyInput" type="number" placeholder="輸入日圓金額..." class="w-full bg-transparent text-xl font-bold focus:outline-none text-zinc-800">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 pt-2">
-                        <div class="bg-zinc-50 p-3 rounded-xl border border-zinc-100">
-                            <p class="text-[11px] text-zinc-400 font-medium">折合港幣</p>
-                            <p class="text-lg font-bold text-blue-600 mt-0.5">$ {{ (jpyInput * 0.0515).toFixed(2) }}</p>
+                <div class="bg-white p-6 rounded-[2.5rem] space-y-5 shadow-sm border border-zinc-100">
+                    <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-[0.2em]">Currency Converter</h3>
+                    <div class="space-y-1">
+                        <div class="flex items-center border-b-2 border-zinc-100 py-3">
+                            <span class="text-2xl font-black text-purple-600 mr-3 font-title">¥</span>
+                            <input v-model.number="jpyInput" type="number" placeholder="日圓" class="w-full bg-transparent text-3xl font-black focus:outline-none text-zinc-900 font-title">
                         </div>
-                        <div class="bg-zinc-50 p-3 rounded-xl border border-zinc-100">
-                            <p class="text-[11px] text-zinc-400 font-medium">折合英鎊</p>
-                            <p class="text-lg font-bold text-zinc-700 mt-0.5">£ {{ (jpyInput * 0.0052).toFixed(2) }}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-zinc-50 p-4 rounded-3xl border border-zinc-100">
+                            <p class="text-[10px] text-zinc-400 font-bold uppercase">HKD 港幣</p>
+                            <p class="text-xl font-black text-purple-600 mt-1 font-title">$ {{ (jpyInput * 0.0515).toFixed(2) }}</p>
+                        </div>
+                        <div class="bg-zinc-50 p-4 rounded-3xl border border-zinc-100">
+                            <p class="text-[10px] text-zinc-400 font-bold uppercase">GBP 英鎊</p>
+                            <p class="text-xl font-black text-zinc-900 mt-1 font-title">£ {{ (jpyInput * 0.0052).toFixed(2) }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="activeTab === 'ledger'" class="space-y-4">
-                <div class="bg-gradient-to-r from-[#4A72B2] to-[#6A92D2] p-4 rounded-2xl text-white shadow-md flex justify-between items-center">
-                    <div>
-                        <h3 class="text-sm font-medium opacity-90">旅程累積花費折算</h3>
-                        <p class="text-2xl font-black mt-0.5">HKD $ {{ totalHkdExpense }}</p>
-                    </div>
-                    <div class="text-right text-xs opacity-80 space-y-0.5">
-                        <p>日圓總計: ¥ {{ totalJpyCombined }}</p>
+            <div v-if="activeTab === 'ledger'" class="space-y-5">
+                <div class="bg-zinc-900 p-6 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/20 rounded-full blur-3xl"></div>
+                    <div class="relative z-10">
+                        <h3 class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Total Spent (HKD)</h3>
+                        <p class="text-4xl font-black mt-1 font-title">$ {{ totalHkdExpense }}</p>
+                        <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-[11px] opacity-70">
+                            <span>日圓總計</span>
+                            <span class="font-bold font-title text-purple-400">¥ {{ totalJpyCombined }}</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex justify-between items-center px-1">
-                    <h2 class="text-lg font-bold text-zinc-900">支出明細</h2>
-                    <button @click="showAddExpenseModal = true" class="bg-[#4A72B2] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1">
-                        <i class="fa-solid fa-plus text-[10px]"></i> 新增記帳
+                    <h2 class="text-xl font-black text-zinc-900 tracking-tight">花費明細</h2>
+                    <button @click="showAddExpenseModal = true" class="bg-purple-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> 新增
                     </button>
                 </div>
 
-                <div class="bg-white rounded-2xl divide-y divide-zinc-100 overflow-hidden shadow-sm border border-zinc-100">
-                    <div v-for="(item, index) in expenses" :key="index" class="p-4 flex justify-between items-center">
+                <div class="bg-white rounded-[2.5rem] divide-y divide-zinc-50 overflow-hidden shadow-sm border border-zinc-100">
+                    <div v-for="(item, index) in expenses" :key="index" class="p-5 flex justify-between items-center">
                         <div class="space-y-1">
                             <div class="flex items-center space-x-2">
-                                <span class="bg-blue-50 text-[#4A72B2] px-2 py-0.5 rounded-md text-[10px] font-bold">{{ item.category }}</span>
-                                <span class="font-bold text-zinc-800 text-sm">{{ item.title }}</span>
+                                <span class="bg-purple-50 text-purple-600 px-2 py-0.5 rounded text-[9px] font-bold">{{ item.category }}</span>
+                                <span class="font-bold text-zinc-800">{{ item.title }}</span>
                             </div>
-                            <p class="text-[11px] text-zinc-400">
-                                輸入金額: {{ getCurrencySymbol(item.currency) }} {{ item.amount }} 
-                                <span v-if="item.currency !== 'JPY'">（約合 ¥ {{ Math.round(item.jpyValue) }}）</span>
+                            <p class="text-[10px] text-zinc-400 font-medium">
+                                {{ getCurrencySymbol(item.currency) }} {{ item.amount }} 
+                                <span v-if="item.currency !== 'JPY'"> (¥ {{ Math.round(item.jpyValue) }})</span>
                             </p>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span class="font-bold text-zinc-800 text-sm">HKD $ {{ item.hkdValue.toFixed(1) }}</span>
-                            <button @click="openEditExpense(item, index)" class="p-1.5 text-zinc-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button @click="deleteExpense(index)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
+                            <span class="font-black text-zinc-800 font-title">HKD ${{ item.hkdValue.toFixed(1) }}</span>
+                            <button @click="openEditExpense(item, index)" class="p-2 text-zinc-300 hover:text-purple-600"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                            <button @click="deleteExpense(index)" class="p-2 text-zinc-200 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
                         </div>
                     </div>
-                    <p v-if="expenses.length === 0" class="text-center text-zinc-400 text-sm py-10">目前沒有記帳數據。</p>
                 </div>
             </div>
 
             <div v-if="activeTab === 'shopping'" class="space-y-4">
                 <div class="flex justify-between items-center px-1">
-                    <h2 class="text-lg font-bold text-zinc-900">購物清單</h2>
-                    <button @click="showAddShopModal = true" class="bg-[#4A72B2] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1">
-                        <i class="fa-solid fa-plus text-[10px]"></i> 新增物品
+                    <h2 class="text-xl font-black text-zinc-900 tracking-tight">必買清單</h2>
+                    <button @click="showAddShopModal = true" class="bg-purple-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> 新增
                     </button>
                 </div>
 
                 <div class="space-y-3">
-                    <div v-for="(item, index) in shoppingList" :key="index" class="bg-white p-4 rounded-2xl shadow-sm border border-zinc-100 flex items-start space-x-3" :class="{'opacity-50': item.done}">
-                        <div class="w-5 h-5 rounded-full border border-zinc-300 flex items-center justify-center mt-0.5 cursor-pointer flex-shrink-0" :class="item.done ? 'border-blue-500 bg-blue-500' : 'bg-white'" @click="toggleShopDone(index)">
+                    <div v-for="(item, index) in shoppingList" :key="index" class="bg-white p-5 rounded-[2rem] shadow-sm border border-zinc-50 flex items-start space-x-4" :class="{'opacity-40': item.done}">
+                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 cursor-pointer flex-shrink-0 transition-all" :class="item.done ? 'border-purple-600 bg-purple-600' : 'border-zinc-200'" @click="toggleShopDone(index)">
                             <i v-if="item.done" class="fa-solid fa-check text-[10px] text-white"></i>
                         </div>
                         
-                        <div class="flex-1 space-y-2">
-                            <span class="text-sm font-medium text-zinc-800 block cursor-pointer" :class="{'line-through text-zinc-400': item.done}" @click="toggleShopDone(index)">{{ item.name }}</span>
-                            <div v-if="item.image" class="w-20 h-20 border border-zinc-100 rounded-xl overflow-hidden bg-zinc-50 shadow-inner">
+                        <div class="flex-1 space-y-3">
+                            <span class="text-base font-bold text-zinc-800 block cursor-pointer" :class="{'line-through text-zinc-400 italic': item.done}" @click="toggleShopDone(index)">{{ item.name }}</span>
+                            <div v-if="item.image" class="w-24 h-24 border border-zinc-100 rounded-2xl overflow-hidden shadow-inner bg-zinc-50">
                                 <img :src="item.image" class="w-full h-full object-cover" @click="modalImage = item.image">
                             </div>
                         </div>
 
-                        <div class="flex items-center space-x-1 flex-shrink-0">
-                            <button @click="openEditShop(item, index)" class="p-1.5 text-zinc-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button @click="deleteShopItem(index)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
+                        <div class="flex items-center space-x-1">
+                            <button @click="openEditShop(item, index)" class="p-2 text-zinc-300 hover:text-purple-600"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
+                            <button @click="deleteShopItem(index)" class="p-2 text-zinc-200 hover:text-red-500"><i class="fa-regular fa-trash-can text-sm"></i></button>
                         </div>
                     </div>
-                    <p v-if="shoppingList.length === 0" class="text-center text-zinc-400 text-sm py-10">購物清單空空如也。</p>
                 </div>
             </div>
 
         </main>
 
-        <div v-if="showAddScheduleModal || isEditingSchedule" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
-                <h3 class="text-base font-bold text-zinc-800">{{ isEditingSchedule ? '修改行程資料' : '新增當天行程' }}</h3>
-                <div class="space-y-3 text-sm">
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">時間</label>
-                        <input v-model="scheduleForm.time" type="time" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">景點或項目名稱</label>
-                        <input v-model="scheduleForm.content" type="text" placeholder="例如：晴空塔、吃拉麵" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">地圖搜尋關鍵字或連結</label>
-                        <input v-model="scheduleForm.mapUrl" type="text" placeholder="填入地名，點擊時可導航" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">行程備註</label>
-                        <input v-model="scheduleForm.note" type="text" placeholder="例如：記得帶外套、預約編號等" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl focus:outline-none focus:border-blue-500">
-                    </div>
-                </div>
-                <div class="flex space-x-2 pt-2">
-                    <button @click="closeScheduleModal" class="w-1/2 py-2 text-sm font-medium bg-zinc-100 text-zinc-600 rounded-xl">取消</button>
-                    <button @click="saveSchedule" class="w-1/2 py-2 text-sm font-bold bg-[#4A72B2] text-white rounded-xl">儲存</button>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="showAddTransitModal || isEditingTransit" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
-                <h3 class="text-base font-bold text-zinc-800">{{ isEditingTransit ? '修改憑證資料' : '新增預約憑證' }}</h3>
-                <div class="space-y-3 text-sm">
-                    <div class="grid grid-cols-2 gap-2">
+        <div v-if="showAddScheduleModal || isEditingSchedule" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
+            <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-7 space-y-5 shadow-2xl">
+                <h3 class="text-xl font-black text-zinc-900">{{ isEditingSchedule ? '編輯行程' : '新增行程' }}</h3>
+                <div class="space-y-4 text-sm">
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-zinc-400 mb-1">分類</label>
-                            <select v-model="transitForm.type" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl">
-                                <option value="✈️ 航班">✈️ 航班</option>
-                                <option value="🏨 酒店">🏨 酒店</option>
-                                <option value="🎫 門票">🎫 門票</option>
-                                <option value="🚇 交通">🚇 交通</option>
+                            <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Time 時間</label>
+                            <input v-model="scheduleForm.time" type="time" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-600/20">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Date 日期</label>
+                            <select v-model="selectedDate" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl text-xs">
+                                <option v-for="day in dateTabs" :value="day.value">{{ day.value }}</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-zinc-400 mb-1">憑證名稱</label>
-                            <input v-model="transitForm.title" type="text" placeholder="如：國泰航空機票" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl">
-                        </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">詳細備忘資訊</label>
-                        <textarea v-model="transitForm.note" rows="3" placeholder="輸入預約代碼、時間或座位等..." class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl text-xs focus:outline-none"></textarea>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Event 行程內容</label>
+                        <input v-model="scheduleForm.content" type="text" placeholder="例如：晴空塔觀光" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Note 備註</label>
+                        <input v-model="scheduleForm.note" type="text" placeholder="注意事項" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Navigation 導航關鍵字</label>
+                        <input v-model="scheduleForm.mapUrl" type="text" placeholder="地名或地圖網址" class="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-2xl focus:outline-none">
                     </div>
                 </div>
-                <div class="flex space-x-2 pt-2">
-                    <button @click="closeTransitModal" class="w-1/2 py-2 text-sm font-medium bg-zinc-100 text-zinc-600 rounded-xl">取消</button>
-                    <button @click="saveTransit" class="w-1/2 py-2 text-sm font-bold bg-[#4A72B2] text-white rounded-xl">儲存</button>
+                <div class="flex space-x-3 pt-4">
+                    <button @click="closeScheduleModal" class="w-1/2 py-3 text-sm font-bold bg-zinc-100 text-zinc-500 rounded-2xl">取消</button>
+                    <button @click="saveSchedule" class="w-1/2 py-3 text-sm font-bold bg-purple-600 text-white rounded-2xl shadow-lg shadow-purple-200">儲存</button>
                 </div>
             </div>
         </div>
 
-        <div v-if="showAddExpenseModal || isEditingExpense" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
-                <h3 class="text-base font-bold text-zinc-800">{{ isEditingExpense ? '修改記帳內容' : '新增支出記帳' }}</h3>
-                <div class="space-y-3 text-sm">
-                    <div class="grid grid-cols-2 gap-2">
+        <div v-if="showAddExpenseModal || isEditingExpense" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
+            <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-7 space-y-5 shadow-2xl">
+                <h3 class="text-xl font-black text-zinc-900">{{ isEditingExpense ? '修改記帳' : '新增記帳' }}</h3>
+                <div class="space-y-4 text-sm">
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-zinc-400 mb-1">消費類別</label>
-                            <select v-model="expenseForm.category" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl text-xs">
+                            <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Category 分類</label>
+                            <select v-model="expenseForm.category" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl text-xs">
                                 <option value="🍱 餐飲美食">🍱 餐飲美食</option>
                                 <option value="🛍️ 藥妝購物">🛍️ 藥妝購物</option>
                                 <option value="🚇 地鐵交通">🚇 地鐵交通</option>
@@ -294,87 +275,114 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-zinc-400 mb-1">付款貨幣</label>
-                            <select v-model="expenseForm.currency" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl text-xs font-bold text-blue-600">
-                                <option value="JPY">日圓 (JPY ¥)</option>
-                                <option value="HKD">港幣 (HKD $)</option>
-                                <option value="GBP">英鎊 (GBP £)</option>
+                            <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Currency 貨幣</label>
+                            <select v-model="expenseForm.currency" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl text-xs font-bold text-purple-600">
+                                <option value="JPY">日圓 ¥</option>
+                                <option value="HKD">港幣 $</option>
+                                <option value="GBP">英鎊 £</option>
                             </select>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 items-end">
-                        <div class="col-span-1">
-                            <label class="block text-xs font-bold text-zinc-400 mb-1">金額</label>
-                            <input v-model.number="expenseForm.amount" type="number" placeholder="0" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl font-bold">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-xs font-bold text-zinc-400 mb-1">花費項目備忘</label>
-                            <input v-model="expenseForm.title" type="text" placeholder="如：一蘭拉麵、藥妝店" class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl">
-                        </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Amount 金額</label>
+                        <input v-model.number="expenseForm.amount" type="number" placeholder="0" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl font-black text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Memo 項目備忘</label>
+                        <input v-model="expenseForm.title" type="text" placeholder="例如：晚餐拉麵" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl">
                     </div>
                 </div>
-                <div class="flex space-x-2 pt-2">
-                    <button @click="closeExpenseModal" class="w-1/2 py-2 text-sm font-medium bg-zinc-100 text-zinc-600 rounded-xl">取消</button>
-                    <button @click="saveExpense" class="w-1/2 py-2 text-sm font-bold bg-[#4A72B2] text-white rounded-xl">確認儲存</button>
+                <div class="flex space-x-3 pt-4">
+                    <button @click="closeExpenseModal" class="w-1/2 py-3 text-sm font-bold bg-zinc-100 text-zinc-500 rounded-2xl">取消</button>
+                    <button @click="saveExpense" class="w-1/2 py-3 text-sm font-bold bg-purple-600 text-white rounded-2xl">儲存</button>
                 </div>
             </div>
         </div>
 
-        <div v-if="showAddShopModal || isEditingShop" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
-                <h3 class="text-base font-bold text-zinc-800">{{ isEditingShop ? '修改物品項目' : '新增想買物品' }}</h3>
-                <div class="space-y-3 text-sm">
+        <div v-if="showAddTransitModal || isEditingTransit" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
+            <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-7 space-y-5 shadow-2xl">
+                <h3 class="text-xl font-black text-zinc-900">{{ isEditingTransit ? '編輯憑證' : '新增憑證' }}</h3>
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">物品名稱</label>
-                        <input v-model="shopForm.name" type="text" placeholder="輸入藥妝或電器名稱..." class="w-full bg-zinc-50 border border-zinc-200 p-2 rounded-xl">
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Type 類型</label>
+                        <select v-model="transitForm.type" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl text-xs">
+                            <option value="✈️ 航班">✈️ 航班</option>
+                            <option value="🏨 酒店">🏨 酒店</option>
+                            <option value="🎫 門票">🎫 門票</option>
+                            <option value="🚇 交通">🚇 交通</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">物品相片</label>
-                        <div class="flex items-center space-x-3">
-                            <label class="cursor-pointer bg-zinc-100 hover:bg-zinc-200 text-zinc-700 px-3 py-2 rounded-xl border border-zinc-200 flex items-center space-x-2 text-xs font-medium">
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Title 憑證名稱</label>
+                        <input v-model="transitForm.title" type="text" placeholder="如：回程機票" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Details 詳細備忘</label>
+                        <textarea v-model="transitForm.note" rows="3" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl text-xs"></textarea>
+                    </div>
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button @click="closeTransitModal" class="w-1/2 py-3 text-sm font-bold bg-zinc-100 text-zinc-500 rounded-2xl">取消</button>
+                    <button @click="saveTransit" class="w-1/2 py-3 text-sm font-bold bg-purple-600 text-white rounded-2xl">儲存</button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="showAddShopModal || isEditingShop" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
+            <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-7 space-y-5 shadow-2xl">
+                <h3 class="text-xl font-black text-zinc-900">{{ isEditingShop ? '編輯物品' : '新增物品' }}</h3>
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Item Name 物品名稱</label>
+                        <input v-model="shopForm.name" type="text" placeholder="例如：防曬乳" class="w-full bg-zinc-50 border border-zinc-100 p-3 rounded-2xl">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Photo 相片</label>
+                        <div class="flex items-center gap-4">
+                            <label class="flex-1 cursor-pointer bg-purple-50 hover:bg-purple-100 text-purple-600 px-4 py-3 rounded-2xl border border-purple-100 flex items-center justify-center gap-2 text-xs font-bold transition-all">
                                 <i class="fa-solid fa-camera"></i>
-                                <span>{{ shopForm.image ? '更新圖片' : '拍照 / 上傳相片' }}</span>
+                                <span>{{ shopForm.image ? '更換照片' : '拍攝/上傳' }}</span>
                                 <input type="file" accept="image/*" @change="handleImageUpload" class="hidden">
                             </label>
-                            <button v-if="shopForm.image" @click="shopForm.image = null" class="text-xs text-red-500 font-medium">移除圖片</button>
+                            <button v-if="shopForm.image" @click="shopForm.image = null" class="text-xs text-red-500 font-bold">移除</button>
                         </div>
                     </div>
-                    <div v-if="shopForm.image" class="w-20 h-20 border border-zinc-200 rounded-xl overflow-hidden shadow-inner">
+                    <div v-if="shopForm.image" class="w-20 h-20 border-2 border-purple-100 rounded-2xl overflow-hidden">
                         <img :src="shopForm.image" class="w-full h-full object-cover">
                     </div>
                 </div>
-                <div class="flex space-x-2 pt-2">
-                    <button @click="closeShopModal" class="w-1/2 py-2 text-sm font-medium bg-zinc-100 text-zinc-600 rounded-xl">取消</button>
-                    <button @click="saveShopItem" class="w-1/2 py-2 text-sm font-bold bg-[#4A72B2] text-white rounded-xl">儲存</button>
+                <div class="flex space-x-3 pt-4">
+                    <button @click="closeShopModal" class="w-1/2 py-3 text-sm font-bold bg-zinc-100 text-zinc-500 rounded-2xl">取消</button>
+                    <button @click="saveShopItem" class="w-1/2 py-3 text-sm font-bold bg-purple-600 text-white rounded-2xl">儲存</button>
                 </div>
             </div>
         </div>
 
-        <div v-if="modalImage" class="fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4" @click="modalImage = null">
-            <img :src="modalImage" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl">
+        <div v-if="modalImage" class="fixed inset-0 bg-black/95 z-[200] flex items-center justify-center p-4" @click="modalImage = null">
+            <img :src="modalImage" class="max-w-full max-h-[85vh] rounded-3xl shadow-2xl">
         </div>
 
-        <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[92%] max-w-sm z-50">
-            <nav class="glass-nav rounded-3xl py-3 px-2 flex justify-around items-center shadow-lg border border-white/50">
-                <button @click="activeTab = 'schedule'" :class="activeTab === 'schedule' ? 'text-[#4A72B2] font-bold scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                    <i class="fa-solid fa-route text-base mb-0.5"></i>
-                    <span class="text-[10px]">行程</span>
+        <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-[92%] max-w-sm z-50">
+            <nav class="glass-nav rounded-[2rem] py-3 px-2 flex justify-around items-center shadow-2xl">
+                <button @click="activeTab = 'schedule'" :class="activeTab === 'schedule' ? 'text-purple-600 font-bold scale-110' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
+                    <i class="fa-solid fa-calendar-day text-lg mb-0.5"></i>
+                    <span class="text-[9px] font-bold">行程</span>
                 </button>
-                <button @click="activeTab = 'transit'" :class="activeTab === 'transit' ? 'text-[#4A72B2] font-bold scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                    <i class="fa-solid fa-passport text-base mb-0.5"></i>
-                    <span class="text-[10px]">預約</span>
+                <button @click="activeTab = 'transit'" :class="activeTab === 'transit' ? 'text-purple-600 font-bold scale-110' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
+                    <i class="fa-solid fa-ticket-simple text-lg mb-0.5"></i>
+                    <span class="text-[9px] font-bold">憑證</span>
                 </button>
-                <button @click="activeTab = 'currency'" :class="activeTab === 'currency' ? 'text-[#4A72B2] font-bold scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                    <i class="fa-solid fa-calculator text-base mb-0.5"></i>
-                    <span class="text-[10px]">匯率</span>
+                <button @click="activeTab = 'currency'" :class="activeTab === 'currency' ? 'text-purple-600 font-bold scale-110' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
+                    <i class="fa-solid fa-coins text-lg mb-0.5"></i>
+                    <span class="text-[9px] font-bold">匯率</span>
                 </button>
-                <button @click="activeTab = 'ledger'" :class="activeTab === 'ledger' ? 'text-[#4A72B2] font-bold scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                    <i class="fa-solid fa-wallet text-base mb-0.5"></i>
-                    <span class="text-[10px]">記帳</span>
+                <button @click="activeTab = 'ledger'" :class="activeTab === 'ledger' ? 'text-purple-600 font-bold scale-110' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
+                    <i class="fa-solid fa-wallet text-lg mb-0.5"></i>
+                    <span class="text-[9px] font-bold">記帳</span>
                 </button>
-                <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'text-[#4A72B2] font-bold scale-105' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
-                    <i class="fa-solid fa-bag-shopping text-base mb-0.5"></i>
-                    <span class="text-[10px]">購物</span>
+                <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'text-purple-600 font-bold scale-110' : 'text-zinc-400'" class="flex flex-col items-center justify-center flex-1 transition-all">
+                    <i class="fa-solid fa-shopping-bag text-lg mb-0.5"></i>
+                    <span class="text-[9px] font-bold">清單</span>
                 </button>
             </nav>
         </div>
@@ -389,13 +397,12 @@
                 const activeTab = ref('schedule');
                 const selectedDate = ref('30/6');
 
-                // 輔助函式：從 LocalStorage 讀取或載入預設值
+                // 核心持久化儲存函式
                 const getStoredData = (key, defaultData) => {
                     const saved = localStorage.getItem(key);
                     return saved ? JSON.parse(saved) : defaultData;
                 };
 
-                // 日期基本架構
                 const dateTabs = ref([
                     { label: 'Day 1', dayNum: '30', value: '30/6' },
                     { label: 'Day 2', dayNum: '01', value: '1/7' },
@@ -407,73 +414,57 @@
                     { label: 'Day 8', dayNum: '07', value: '7/7' }
                 ]);
 
-                // 天氣靜態模擬數據
                 const weatherData = {
-                    '30/6': { desc: '體感 24°C · 晴時多雲', temp: '26°C', icon: 'fa-solid fa-cloud-sun' },
-                    '1/7': { desc: '體感 26°C · 萬里晴空', temp: '29°C', icon: 'fa-solid fa-sun' },
-                    '2/7': { desc: '體感 21°C · 局部陣雨', temp: '23°C', icon: 'fa-solid fa-cloud-showers-heavy' },
-                    '3/7': { desc: '體感 22°C · 陰天偶有風', temp: '24°C', icon: 'fa-solid fa-cloud' },
-                    '4/7': { desc: '體感 27°C · 日照強烈', temp: '31°C', icon: 'fa-solid fa-sun' },
-                    '5/7': { desc: '體感 25°C · 雲層偏厚', temp: '27°C', icon: 'fa-solid fa-cloud' },
-                    '6/7': { desc: '體感 26°C · 舒適晴朗', temp: '28°C', icon: 'fa-solid fa-cloud-sun' },
-                    '7/7': { desc: '體感 20°C · 雷陣雨注意', temp: '22°C', icon: 'fa-solid fa-cloud-bolt' }
+                    '30/6': { desc: 'Cloudy · 晴時多雲', temp: '26°C', icon: 'fa-solid fa-cloud-sun' },
+                    '1/7': { desc: 'Clear · 萬里晴空', temp: '29°C', icon: 'fa-solid fa-sun' },
+                    '2/7': { desc: 'Showers · 局部陣雨', temp: '23°C', icon: 'fa-solid fa-cloud-showers-heavy' },
+                    '3/7': { desc: 'Overcast · 陰天', temp: '24°C', icon: 'fa-solid fa-cloud' },
+                    '4/7': { desc: 'Sunny · 日照強烈', temp: '31°C', icon: 'fa-solid fa-sun' },
+                    '5/7': { desc: 'Cloudy · 雲層偏厚', temp: '27°C', icon: 'fa-solid fa-cloud' },
+                    '6/7': { desc: 'Sunny · 舒適晴朗', temp: '28°C', icon: 'fa-solid fa-cloud-sun' },
+                    '7/7': { desc: 'Storm · 雷陣雨', temp: '22°C', icon: 'fa-solid fa-cloud-bolt' }
                 };
-                const getWeatherInfo = (date) => weatherData[date] || { desc: '多雲', temp: '--°C', icon: 'fa-solid fa-cloud' };
+                const getWeatherInfo = (date) => weatherData[date] || { desc: 'Sunny', temp: '--°C', icon: 'fa-solid fa-sun' };
 
-                // 1. 行程資料
-                const defaultSchedules = [
-                    { date: '30/6', time: '09:05', content: '航班前往東京 (HB320)', mapUrl: '香港國際機場', note: '機票已確認，去程記得提前兩小時到櫃檯辦理托運。' },
-                    { date: '30/6', time: '15:00', content: '搭乘 NEX 成田特快', mapUrl: '成田空港駅', note: '前往新宿，記得在櫃檯先用周遊券劃位。' },
-                    { date: '1/7', time: '10:00', content: '淺朝寺雷門大燈籠', mapUrl: '淺草寺', note: '帶長輩慢慢走，主殿周邊風大，外套備用。' }
-                ];
-                const schedules = ref(getStoredData('tokyo_schedules', defaultSchedules));
+                // 1. 行程
+                const schedules = ref(getStoredData('t_sch', []));
                 const showAddScheduleModal = ref(false);
                 const isEditingSchedule = ref(false);
                 const scheduleForm = ref({ time: '', content: '', mapUrl: '', note: '' });
-                let currentEditScheduleRef = null;
+                let curSchIdx = null;
 
-                // 2. 憑證資料
-                const defaultTransit = [
-                    { type: '✈️ 航班', title: '回程航班 (香港航空)', note: '07/07 18:20 成田機場起飛' }
-                ];
-                const transitList = ref(getStoredData('tokyo_transit', defaultTransit));
+                // 2. 憑證
+                const transitList = ref(getStoredData('t_trns', []));
                 const showAddTransitModal = ref(false);
                 const isEditingTransit = ref(false);
                 const transitForm = ref({ type: '✈️ 航班', title: '', note: '' });
-                let currentEditTransitIndex = null;
+                let curTrnsIdx = null;
 
-                // 3. 匯率快算
+                // 3. 匯率
                 const jpyInput = ref(10000);
 
-                // 4. 記帳資料
-                const defaultExpenses = [
-                    { category: '🍱 餐飲美食', title: '機場航廈拉麵午餐', currency: 'JPY', amount: 3500, jpyValue: 3500, hkdValue: 180.25 },
-                    { category: '🚇 地鐵交通', title: 'Suica西瓜卡增值', currency: 'HKD', amount: 200, jpyValue: 3883.5, hkdValue: 200 }
-                ];
-                const expenses = ref(getStoredData('tokyo_expenses', defaultExpenses));
+                // 4. 記帳
+                const expenses = ref(getStoredData('t_exp', []));
                 const showAddExpenseModal = ref(false);
                 const isEditingExpense = ref(false);
                 const expenseForm = ref({ category: '🍱 餐飲美食', currency: 'JPY', amount: null, title: '' });
-                let currentEditExpenseIndex = null;
+                let curExpIdx = null;
 
-                // 5. 購物清單資料
-                const defaultShopping = [
-                    { name: '合利他命 Alinamin EX Plus 兩罐', done: false, image: null }
-                ];
-                const shoppingList = ref(getStoredData('tokyo_shopping', defaultShopping));
+                // 5. 購物
+                const shoppingList = ref(getStoredData('t_shop', []));
                 const showAddShopModal = ref(false);
                 const isEditingShop = ref(false);
                 const shopForm = ref({ name: '', image: null });
-                let currentEditShopIndex = null;
+                let curShopIdx = null;
                 const modalImage = ref(null);
 
-                // ==================== 監聽器 (自動同步至手機本機快取) ====================
-                watch(schedules, (newVal) => localStorage.setItem('tokyo_schedules', JSON.stringify(newVal)), { deep: true });
-                watch(transitList, (newVal) => localStorage.setItem('tokyo_transit', JSON.stringify(newVal)), { deep: true });
-                watch(expenses, (newVal) => localStorage.setItem('tokyo_expenses', JSON.stringify(newVal)), { deep: true });
-                watch(shoppingList, (newVal) => localStorage.setItem('tokyo_shopping', JSON.stringify(newVal)), { deep: true });
+                // Watchers
+                watch(schedules, (val) => localStorage.setItem('t_sch', JSON.stringify(val)), { deep: true });
+                watch(transitList, (val) => localStorage.setItem('t_trns', JSON.stringify(val)), { deep: true });
+                watch(expenses, (val) => localStorage.setItem('t_exp', JSON.stringify(val)), { deep: true });
+                watch(shoppingList, (val) => localStorage.setItem('t_shop', JSON.stringify(val)), { deep: true });
 
-                // 計算當日行程並排序
+                // Methods
                 const filteredSchedules = computed(() => {
                     return schedules.value
                         .map((item, idx) => ({ ...item, originalIndex: idx }))
@@ -481,135 +472,100 @@
                         .sort((a, b) => a.time.localeCompare(b.time));
                 });
 
-                // 統計累計花費
-                const totalHkdExpense = computed(() => {
-                    return expenses.value.reduce((sum, item) => sum + item.hkdValue, 0).toFixed(1);
-                });
-                const totalJpyCombined = computed(() => {
-                    return Math.round(expenses.value.reduce((sum, item) => sum + item.jpyValue, 0));
-                });
-
-                // 行程操作方法
                 const openEditSchedule = (item) => {
-                    currentEditScheduleRef = item.originalIndex;
-                    scheduleForm.value = { ...schedules.value[item.originalIndex] };
+                    curSchIdx = item.originalIndex;
+                    scheduleForm.value = { ...schedules.value[curSchIdx] };
                     isEditingSchedule.value = true;
                 };
                 const saveSchedule = () => {
                     if (scheduleForm.value.time && scheduleForm.value.content) {
                         if (isEditingSchedule.value) {
-                            schedules.value[currentEditScheduleRef] = { ...schedules.value[currentEditScheduleRef], ...scheduleForm.value };
+                            schedules.value[curSchIdx] = { ...scheduleForm.value };
                         } else {
                             schedules.value.push({ date: selectedDate.value, ...scheduleForm.value });
                         }
                         closeScheduleModal();
                     }
                 };
-                const deleteSchedule = (index) => {
-                    schedules.value.splice(index, 1);
-                };
+                const deleteSchedule = (index) => schedules.value.splice(index, 1);
                 const closeScheduleModal = () => {
                     showAddScheduleModal.value = false;
                     isEditingSchedule.value = false;
                     scheduleForm.value = { time: '', content: '', mapUrl: '', note: '' };
                 };
 
-                // 憑證操作方法
                 const openEditTransit = (item, index) => {
-                    currentEditTransitIndex = index;
+                    curTrnsIdx = index;
                     transitForm.value = { ...item };
                     isEditingTransit.value = true;
                 };
                 const saveTransit = () => {
                     if (transitForm.value.title) {
-                        if (isEditingTransit.value) {
-                            transitList.value[currentEditTransitIndex] = { ...transitForm.value };
-                        } else {
-                            transitList.value.push({ ...transitForm.value });
-                        }
+                        if (isEditingTransit.value) transitList.value[curTrnsIdx] = { ...transitForm.value };
+                        else transitList.value.push({ ...transitForm.value });
                         closeTransitModal();
                     }
                 };
-                const deleteTransit = (index) => {
-                    transitList.value.splice(index, 1);
-                };
+                const deleteTransit = (index) => transitList.value.splice(index, 1);
                 const closeTransitModal = () => {
                     showAddTransitModal.value = false;
                     isEditingTransit.value = false;
                     transitForm.value = { type: '✈️ 航班', title: '', note: '' };
                 };
 
-                // 記帳運算方法
+                const totalHkdExpense = computed(() => expenses.value.reduce((s, i) => s + i.hkdValue, 0).toFixed(1));
+                const totalJpyCombined = computed(() => Math.round(expenses.value.reduce((s, i) => s + i.jpyValue, 0)));
+
                 const openEditExpense = (item, index) => {
-                    currentEditExpenseIndex = index;
+                    curExpIdx = index;
                     expenseForm.value = { category: item.category, currency: item.currency, amount: item.amount, title: item.title };
                     isEditingExpense.value = true;
                 };
                 const saveExpense = () => {
                     const amt = expenseForm.value.amount || 0;
                     const cur = expenseForm.value.currency;
-                    
                     let jpy = 0, hkd = 0;
-                    if (cur === 'JPY') {
-                        jpy = amt;
-                        hkd = amt * 0.0515;
-                    } else if (cur === 'HKD') {
-                        hkd = amt;
-                        jpy = amt / 0.0515;
-                    } else if (cur === 'GBP') {
-                        hkd = amt * (5.15 / 0.52);
-                        jpy = amt / 0.0052;
-                    }
-
+                    if (cur === 'JPY') { jpy = amt; hkd = amt * 0.0515; }
+                    else if (cur === 'HKD') { hkd = amt; jpy = amt / 0.0515; }
+                    else if (cur === 'GBP') { hkd = amt * (5.15 / 0.52); jpy = amt / 0.0052; }
                     const payload = { ...expenseForm.value, jpyValue: jpy, hkdValue: hkd };
-
-                    if (isEditingExpense.value) {
-                        expenses.value[currentEditExpenseIndex] = payload;
-                    } else {
-                        expenses.value.unshift(payload);
-                    }
+                    if (isEditingExpense.value) expenses.value[curExpIdx] = payload;
+                    else expenses.value.unshift(payload);
                     closeExpenseModal();
                 };
-                const deleteExpense = (index) => {
-                    expenses.value.splice(index, 1);
-                };
+                const deleteExpense = (index) => expenses.value.splice(index, 1);
                 const closeExpenseModal = () => {
                     showAddExpenseModal.value = false;
                     isEditingExpense.value = false;
                     expenseForm.value = { category: '🍱 餐飲美食', currency: 'JPY', amount: null, title: '' };
                 };
 
-                // 購物清單方法
                 const openEditShop = (item, index) => {
-                    currentEditShopIndex = index;
+                    curShopIdx = index;
                     shopForm.value = { name: item.name, image: item.image };
                     isEditingShop.value = true;
                 };
-                const handleImageUpload = (event) => {
-                    const file = event.target.files[0];
+                const handleImageUpload = (e) => {
+                    const file = e.target.files[0];
                     if (file) {
                         const reader = new FileReader();
-                        reader.onload = (e) => { shopForm.value.image = e.target.result; };
+                        reader.onload = (ev) => { shopForm.value.image = ev.target.result; };
                         reader.readAsDataURL(file);
                     }
                 };
                 const saveShopItem = () => {
                     if (shopForm.value.name.trim()) {
                         if (isEditingShop.value) {
-                            shoppingList.value[currentEditShopIndex].name = shopForm.value.name;
-                            shoppingList.value[currentEditShopIndex].image = shopForm.value.image;
+                            shoppingList.value[curShopIdx].name = shopForm.value.name;
+                            shoppingList.value[curShopIdx].image = shopForm.value.image;
                         } else {
                             shoppingList.value.push({ name: shopForm.value.name.trim(), done: false, image: shopForm.value.image });
                         }
                         closeShopModal();
                     }
                 };
-                const toggleShopDone = (index) => {
-                    shoppingList.value[index].done = !shoppingList.value[index].done;
-                };
-                const deleteShopItem = (index) => {
-                    shoppingList.value.splice(index, 1);
-                };
+                const toggleShopDone = (idx) => { shoppingList.value[idx].done = !shoppingList.value[idx].done; };
+                const deleteShopItem = (idx) => { shoppingList.value.splice(idx, 1); };
                 const closeShopModal = () => {
                     showAddShopModal.value = false;
                     isEditingShop.value = false;
@@ -617,17 +573,17 @@
                 };
 
                 const formatMapUrl = (url) => {
-                    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-                    return `http://maps.google.com/?q=${encodeURIComponent(url)}`;
+                    if (url.startsWith('http')) return url;
+                    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(url)}`;
                 };
-                const getCurrencySymbol = (cur) => ({ JPY: '¥', HKD: '$', GBP: '£' }[cur] || '$');
+                const getCurrencySymbol = (cur) => ({ JPY: '¥', HKD: '$', GBP: '£' }[cur]);
 
                 return {
                     activeTab, selectedDate, dateTabs, getWeatherInfo, jpyInput, modalImage,
                     schedules, filteredSchedules, showAddScheduleModal, isEditingSchedule, scheduleForm, openEditSchedule, saveSchedule, deleteSchedule, closeScheduleModal, formatMapUrl,
                     transitList, showAddTransitModal, isEditingTransit, transitForm, openEditTransit, saveTransit, deleteTransit, closeTransitModal,
                     expenses, showAddExpenseModal, isEditingExpense, expenseForm, totalHkdExpense, totalJpyCombined, openEditExpense, saveExpense, deleteExpense, closeExpenseModal, getCurrencySymbol,
-                    shoppingList, showAddShopModal, isEditingShop, shopForm, openEditShop, saveShopItem, toggleShopDone, deleteShopItem, closeShopModal
+                    shoppingList, showAddShopModal, isEditingShop, shopForm, openEditShop, handleImageUpload, saveShopItem, toggleShopDone, deleteShopItem, closeShopModal
                 };
             }
         }).mount('#app');
