@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -121,7 +121,7 @@
                         </div>
                         <div class="flex items-center space-x-1">
                             <button @click="openEditTransit(item, index)" class="p-1.5 text-zinc-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button @click="transitList.splice(index, 1)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
+                            <button @click="deleteTransit(index)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
                         </div>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                         <div class="flex items-center space-x-2">
                             <span class="font-bold text-zinc-800 text-sm">HKD $ {{ item.hkdValue.toFixed(1) }}</span>
                             <button @click="openEditExpense(item, index)" class="p-1.5 text-zinc-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button @click="expenses.splice(index, 1)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
+                            <button @click="deleteExpense(index)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
                         </div>
                     </div>
                     <p v-if="expenses.length === 0" class="text-center text-zinc-400 text-sm py-10">目前沒有記帳數據。</p>
@@ -197,12 +197,12 @@
 
                 <div class="space-y-3">
                     <div v-for="(item, index) in shoppingList" :key="index" class="bg-white p-4 rounded-2xl shadow-sm border border-zinc-100 flex items-start space-x-3" :class="{'opacity-50': item.done}">
-                        <div class="w-5 h-5 rounded-full border border-zinc-300 flex items-center justify-center mt-0.5 cursor-pointer flex-shrink-0" :class="item.done ? 'border-blue-500 bg-blue-500' : 'bg-white'" @click="item.done = !item.done">
+                        <div class="w-5 h-5 rounded-full border border-zinc-300 flex items-center justify-center mt-0.5 cursor-pointer flex-shrink-0" :class="item.done ? 'border-blue-500 bg-blue-500' : 'bg-white'" @click="toggleShopDone(index)">
                             <i v-if="item.done" class="fa-solid fa-check text-[10px] text-white"></i>
                         </div>
                         
                         <div class="flex-1 space-y-2">
-                            <span class="text-sm font-medium text-zinc-800 block cursor-pointer" :class="{'line-through text-zinc-400': item.done}" @click="item.done = !item.done">{{ item.name }}</span>
+                            <span class="text-sm font-medium text-zinc-800 block cursor-pointer" :class="{'line-through text-zinc-400': item.done}" @click="toggleShopDone(index)">{{ item.name }}</span>
                             <div v-if="item.image" class="w-20 h-20 border border-zinc-100 rounded-xl overflow-hidden bg-zinc-50 shadow-inner">
                                 <img :src="item.image" class="w-full h-full object-cover" @click="modalImage = item.image">
                             </div>
@@ -210,7 +210,7 @@
 
                         <div class="flex items-center space-x-1 flex-shrink-0">
                             <button @click="openEditShop(item, index)" class="p-1.5 text-zinc-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button @click="shoppingList.splice(index, 1)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
+                            <button @click="deleteShopItem(index)" class="p-1.5 text-zinc-300 hover:text-red-500"><i class="fa-regular fa-trash-can text-xs"></i></button>
                         </div>
                     </div>
                     <p v-if="shoppingList.length === 0" class="text-center text-zinc-400 text-sm py-10">購物清單空空如也。</p>
@@ -382,17 +382,20 @@
     </div>
 
     <script>
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, computed, watch } = Vue;
 
         createApp({
             setup() {
                 const activeTab = ref('schedule');
                 const selectedDate = ref('30/6');
 
-                // 核心匯率基準 (100日圓 換算率)
-                const rates = { JPY: 1, HKD: 19.417, GBP: 192.307 }; // 依據 100 JPY ≈ 5.15 HKD ≈ 0.52 GBP 計算之交叉匯率
+                // 輔助函式：從 LocalStorage 讀取或載入預設值
+                const getStoredData = (key, defaultData) => {
+                    const saved = localStorage.getItem(key);
+                    return saved ? JSON.parse(saved) : defaultData;
+                };
 
-                // 日期
+                // 日期基本架構
                 const dateTabs = ref([
                     { label: 'Day 1', dayNum: '30', value: '30/6' },
                     { label: 'Day 2', dayNum: '01', value: '1/7' },
@@ -404,7 +407,7 @@
                     { label: 'Day 8', dayNum: '07', value: '7/7' }
                 ]);
 
-                // 模擬天氣預測數據
+                // 天氣靜態模擬數據
                 const weatherData = {
                     '30/6': { desc: '體感 24°C · 晴時多雲', temp: '26°C', icon: 'fa-solid fa-cloud-sun' },
                     '1/7': { desc: '體感 26°C · 萬里晴空', temp: '29°C', icon: 'fa-solid fa-sun' },
@@ -417,48 +420,58 @@
                 };
                 const getWeatherInfo = (date) => weatherData[date] || { desc: '多雲', temp: '--°C', icon: 'fa-solid fa-cloud' };
 
-                // 1. 行程模組資料結構
-                const schedules = ref([
+                // 1. 行程資料
+                const defaultSchedules = [
                     { date: '30/6', time: '09:05', content: '航班前往東京 (HB320)', mapUrl: '香港國際機場', note: '機票已確認，去程記得提前兩小時到櫃檯辦理托運。' },
                     { date: '30/6', time: '15:00', content: '搭乘 NEX 成田特快', mapUrl: '成田空港駅', note: '前往新宿，記得在櫃檯先用周遊券劃位。' },
-                    { date: '1/7', time: '10:00', content: '淺草寺雷門大燈籠', mapUrl: '淺草寺', note: '帶長輩慢慢走，主殿周邊風大，外套備用。' }
-                ]);
+                    { date: '1/7', time: '10:00', content: '淺朝寺雷門大燈籠', mapUrl: '淺草寺', note: '帶長輩慢慢走，主殿周邊風大，外套備用。' }
+                ];
+                const schedules = ref(getStoredData('tokyo_schedules', defaultSchedules));
                 const showAddScheduleModal = ref(false);
                 const isEditingSchedule = ref(false);
                 const scheduleForm = ref({ time: '', content: '', mapUrl: '', note: '' });
                 let currentEditScheduleRef = null;
 
-                // 2. 憑證模組
-                const transitList = ref([
+                // 2. 憑證資料
+                const defaultTransit = [
                     { type: '✈️ 航班', title: '回程航班 (香港航空)', note: '07/07 18:20 成田機場起飛' }
-                ]);
+                ];
+                const transitList = ref(getStoredData('tokyo_transit', defaultTransit));
                 const showAddTransitModal = ref(false);
                 const isEditingTransit = ref(false);
                 const transitForm = ref({ type: '✈️ 航班', title: '', note: '' });
                 let currentEditTransitIndex = null;
 
-                // 3. 匯率快工具
+                // 3. 匯率快算
                 const jpyInput = ref(10000);
 
-                // 4. 記帳模組 (支援跨幣種輸入與即時換算)
-                const expenses = ref([
+                // 4. 記帳資料
+                const defaultExpenses = [
                     { category: '🍱 餐飲美食', title: '機場航廈拉麵午餐', currency: 'JPY', amount: 3500, jpyValue: 3500, hkdValue: 180.25 },
                     { category: '🚇 地鐵交通', title: 'Suica西瓜卡增值', currency: 'HKD', amount: 200, jpyValue: 3883.5, hkdValue: 200 }
-                ]);
+                ];
+                const expenses = ref(getStoredData('tokyo_expenses', defaultExpenses));
                 const showAddExpenseModal = ref(false);
                 const isEditingExpense = ref(false);
                 const expenseForm = ref({ category: '🍱 餐飲美食', currency: 'JPY', amount: null, title: '' });
                 let currentEditExpenseIndex = null;
 
-                // 5. 購物清單模組
-                const shoppingList = ref([
+                // 5. 購物清單資料
+                const defaultShopping = [
                     { name: '合利他命 Alinamin EX Plus 兩罐', done: false, image: null }
-                ]);
+                ];
+                const shoppingList = ref(getStoredData('tokyo_shopping', defaultShopping));
                 const showAddShopModal = ref(false);
                 const isEditingShop = ref(false);
                 const shopForm = ref({ name: '', image: null });
                 let currentEditShopIndex = null;
                 const modalImage = ref(null);
+
+                // ==================== 監聽器 (自動同步至手機本機快取) ====================
+                watch(schedules, (newVal) => localStorage.setItem('tokyo_schedules', JSON.stringify(newVal)), { deep: true });
+                watch(transitList, (newVal) => localStorage.setItem('tokyo_transit', JSON.stringify(newVal)), { deep: true });
+                watch(expenses, (newVal) => localStorage.setItem('tokyo_expenses', JSON.stringify(newVal)), { deep: true });
+                watch(shoppingList, (newVal) => localStorage.setItem('tokyo_shopping', JSON.stringify(newVal)), { deep: true });
 
                 // 計算當日行程並排序
                 const filteredSchedules = computed(() => {
@@ -468,7 +481,7 @@
                         .sort((a, b) => a.time.localeCompare(b.time));
                 });
 
-                // 統計記帳總額（全換算為港幣與日圓加總）
+                // 統計累計花費
                 const totalHkdExpense = computed(() => {
                     return expenses.value.reduce((sum, item) => sum + item.hkdValue, 0).toFixed(1);
                 });
@@ -476,7 +489,7 @@
                     return Math.round(expenses.value.reduce((sum, item) => sum + item.jpyValue, 0));
                 });
 
-                // 行程儲存/修改
+                // 行程操作方法
                 const openEditSchedule = (item) => {
                     currentEditScheduleRef = item.originalIndex;
                     scheduleForm.value = { ...schedules.value[item.originalIndex] };
@@ -492,14 +505,16 @@
                         closeScheduleModal();
                     }
                 };
-                const deleteSchedule = (index) => schedules.value.splice(index, 1);
+                const deleteSchedule = (index) => {
+                    schedules.value.splice(index, 1);
+                };
                 const closeScheduleModal = () => {
                     showAddScheduleModal.value = false;
                     isEditingSchedule.value = false;
                     scheduleForm.value = { time: '', content: '', mapUrl: '', note: '' };
                 };
 
-                // 憑證儲存/修改
+                // 憑證操作方法
                 const openEditTransit = (item, index) => {
                     currentEditTransitIndex = index;
                     transitForm.value = { ...item };
@@ -515,13 +530,16 @@
                         closeTransitModal();
                     }
                 };
+                const deleteTransit = (index) => {
+                    transitList.value.splice(index, 1);
+                };
                 const closeTransitModal = () => {
                     showAddTransitModal.value = false;
                     isEditingTransit.value = false;
                     transitForm.value = { type: '✈️ 航班', title: '', note: '' };
                 };
 
-                // 記帳運算儲存 (自動將各幣種相互精準折算)
+                // 記帳運算方法
                 const openEditExpense = (item, index) => {
                     currentEditExpenseIndex = index;
                     expenseForm.value = { category: item.category, currency: item.currency, amount: item.amount, title: item.title };
@@ -552,13 +570,16 @@
                     }
                     closeExpenseModal();
                 };
+                const deleteExpense = (index) => {
+                    expenses.value.splice(index, 1);
+                };
                 const closeExpenseModal = () => {
                     showAddExpenseModal.value = false;
                     isEditingExpense.value = false;
                     expenseForm.value = { category: '🍱 餐飲美食', currency: 'JPY', amount: null, title: '' };
                 };
 
-                // 購物模組圖片與儲存
+                // 購物清單方法
                 const openEditShop = (item, index) => {
                     currentEditShopIndex = index;
                     shopForm.value = { name: item.name, image: item.image };
@@ -583,6 +604,12 @@
                         closeShopModal();
                     }
                 };
+                const toggleShopDone = (index) => {
+                    shoppingList.value[index].done = !shoppingList.value[index].done;
+                };
+                const deleteShopItem = (index) => {
+                    shoppingList.value.splice(index, 1);
+                };
                 const closeShopModal = () => {
                     showAddShopModal.value = false;
                     isEditingShop.value = false;
@@ -591,16 +618,16 @@
 
                 const formatMapUrl = (url) => {
                     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-                    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(url)}`;
+                    return `http://maps.google.com/?q=${encodeURIComponent(url)}`;
                 };
                 const getCurrencySymbol = (cur) => ({ JPY: '¥', HKD: '$', GBP: '£' }[cur] || '$');
 
                 return {
                     activeTab, selectedDate, dateTabs, getWeatherInfo, jpyInput, modalImage,
                     schedules, filteredSchedules, showAddScheduleModal, isEditingSchedule, scheduleForm, openEditSchedule, saveSchedule, deleteSchedule, closeScheduleModal, formatMapUrl,
-                    transitList, showAddTransitModal, isEditingTransit, transitForm, openEditTransit, saveTransit, closeTransitModal,
-                    expenses, showAddExpenseModal, isEditingExpense, expenseForm, totalHkdExpense, totalJpyCombined, openEditExpense, saveExpense, closeExpenseModal, getCurrencySymbol,
-                    shoppingList, showAddShopModal, isEditingShop, shopForm, openEditShop, handleImageUpload, saveShopItem, closeShopModal
+                    transitList, showAddTransitModal, isEditingTransit, transitForm, openEditTransit, saveTransit, deleteTransit, closeTransitModal,
+                    expenses, showAddExpenseModal, isEditingExpense, expenseForm, totalHkdExpense, totalJpyCombined, openEditExpense, saveExpense, deleteExpense, closeExpenseModal, getCurrencySymbol,
+                    shoppingList, showAddShopModal, isEditingShop, shopForm, openEditShop, saveShopItem, toggleShopDone, deleteShopItem, closeShopModal
                 };
             }
         }).mount('#app');
